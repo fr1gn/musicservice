@@ -21,3 +21,11 @@ func greetHandler(w http.ResponseWriter, r *http.Request) {
 	response := fmt.Sprintf("Hello, %s!", req.Name)
 	w.Write([]byte(response))
 }
+
+func main() {
+	r := mux.NewRouter()
+	r.HandleFunc("/api/greet", greetHandler).Methods("POST")
+
+	fmt.Println("Server is running on http://localhost:8080")
+	http.ListenAndServe(":8080", r)
+}
