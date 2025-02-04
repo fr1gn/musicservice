@@ -3,6 +3,7 @@ package main
 import (
 	"log"
 	"musicservice/main/database"
+	"musicservice/main/middleware"
 	"musicservice/main/routes"
 	"net/http"
 )
@@ -12,5 +13,5 @@ func main() {
 	router := routes.RegisterRoutes()
 
 	log.Println("Server started on :8080")
-	log.Fatal(http.ListenAndServe(":8080", router))
+	log.Fatal(http.ListenAndServe(":8080", middleware.EnableCORS(router))) // ✅ Fix CORS issue
 }
