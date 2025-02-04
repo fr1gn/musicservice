@@ -17,5 +17,6 @@ func RegisterRoutes() *mux.Router {
 	router.Handle("/api/playlists", middleware.AuthMiddleware(http.HandlerFunc(controllers.CreatePlaylist))).Methods("POST")
 	router.Handle("/api/playlists", middleware.AuthMiddleware(http.HandlerFunc(controllers.GetPlaylists))).Methods("GET")
 	router.Handle("/api/playlists", middleware.AuthMiddleware(http.HandlerFunc(controllers.DeletePlaylist))).Methods("DELETE")
+	router.Handle("/api/deezer/search", middleware.AuthMiddleware(http.HandlerFunc(controllers.SearchDeezerTrack))).Methods("GET")
 	return router
 }
