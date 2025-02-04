@@ -1,31 +1,16 @@
 package main
 
 import (
-	"encoding/json"
-	"fmt"
+	"log"
+	"musicservice/main/database"
+	"musicservice/main/routes"
 	"net/http"
-
-	"github.com/gorilla/mux"
 )
 
-type Request struct {
-	Name string `json:"name"`
-}
-
-func greetHandler(w http.ResponseWriter, r *http.Request) {
-	var req Request
-	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		http.Error(w, "Invalid request", http.StatusBadRequest)
-		return
-	}
-	response := fmt.Sprintf("Hello, %s!", req.Name)
-	w.Write([]byte(response))
-}
-
 func main() {
-	r := mux.NewRouter()
-	r.HandleFunc("/api/greet", greetHandler).Methods("POST")
+	database.Connect()
+	router := routes.RegisterRoutes()
 
-	fmt.Println("Server is running on http://localhost:8080")
-	http.ListenAndServe(":8080", r)
+	log.Println("Server started on :8080")
+	log.Fatal(http.ListenAndServe(":8080", router))
 }
