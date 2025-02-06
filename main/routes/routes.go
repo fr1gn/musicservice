@@ -4,7 +4,6 @@ import (
 	"github.com/gorilla/mux"
 	"musicservice/main/controllers"
 	"musicservice/main/middleware"
-	"net/http"
 )
 
 func RegisterRoutes() *mux.Router {
@@ -12,11 +11,13 @@ func RegisterRoutes() *mux.Router {
 
 	router.HandleFunc("/api/register", controllers.Register).Methods("POST")
 	router.HandleFunc("/api/login", controllers.Login).Methods("POST")
-	router.Handle("/api/delete", middleware.AuthMiddleware(http.HandlerFunc(controllers.DeleteUser))).Methods("DELETE")
+	router.HandleFunc("/api/songs", controllers.GetSongs).Methods("GET")
+	router.HandleFunc("/api/songs", controllers.AddSong).Methods("POST")
 
-	router.Handle("/api/playlists", middleware.AuthMiddleware(http.HandlerFunc(controllers.CreatePlaylist))).Methods("POST")
-	router.Handle("/api/playlists", middleware.AuthMiddleware(http.HandlerFunc(controllers.GetPlaylists))).Methods("GET")
-	router.Handle("/api/playlists", middleware.AuthMiddleware(http.HandlerFunc(controllers.DeletePlaylist))).Methods("DELETE")
-	router.Handle("/api/deezer/search", middleware.AuthMiddleware(http.HandlerFunc(controllers.SearchDeezerTrack))).Methods("GET")
+	protected := router.PathPrefix("/api/playlist").Subrouter()
+	protected.Use(middleware.AuthMiddleware)
+	protected.HandleFunc("/create", controllers.CreatePlaylist).Methods("POST")
+	protected.HandleFunc("/add-song", controllers.AddSongToPlaylist).Methods("POST")
+
 	return router
 }
