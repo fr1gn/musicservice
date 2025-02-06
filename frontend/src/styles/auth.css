@@ -1,0 +1,89 @@
+/* General Styles */
+.auth-container {
+  max-width: 400px;
+  margin: 50px auto;
+  padding: 20px;
+  background-color: #181818;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.6);
+  text-align: center;
+  color: #ffffff;
+  font-family: 'Arial', sans-serif;
+}
+
+/* Form Title */
+.auth-container h2 {
+  color: #1db954;
+  margin-bottom: 20px;
+  font-size: 28px;
+  letter-spacing: 1px;
+}
+
+/* Input Fields */
+.auth-container input[type="email"],
+.auth-container input[type="password"] {
+  width: 100%;
+  padding: 12px;
+  margin: 10px 0;
+  border: 1px solid #333;
+  background-color: #2a2a2a;
+  color: #fff;
+  border-radius: 5px;
+  box-sizing: border-box;
+  transition: all 0.3s ease;
+}
+
+/* Input Focus Effect */
+.auth-container input:focus {
+  border-color: #1db954;
+  outline: none;
+  background-color: #222;
+  box-shadow: 0 0 5px rgba(29, 185, 84, 0.8);
+}
+
+/* Submit Button */
+.auth-container button {
+  background-color: #1db954;
+  color: white;
+  padding: 12px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  width: 100%;
+  font-size: 16px;
+  transition: background-color 0.3s ease;
+  margin-top: 10px;
+}
+
+/* Button Hover Effect */
+.auth-container button:hover {
+  background-color: #17a44a;
+}
+
+/* Error Messages */
+.auth-container .error {
+  color: #ff4d4d;
+  margin-top: 10px;
+  font-size: 14px;
+  font-weight: bold;
+}
+
+/* Success Messages */
+.auth-container .success {
+  color: #1db954;
+  margin-top: 10px;
+  font-size: 14px;
+  font-weight: bold;
+}
+
+/* Responsive Design */
+@media (max-width: 480px) {
+  .auth-container {
+    padding: 15px;
+    margin: 20px;
+  }
+
+  .auth-container h2 {
+    font-size: 24px;
+  }
+}
