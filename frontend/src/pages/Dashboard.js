@@ -1,15 +1,17 @@
-import { Link } from "react-router-dom";
-import "../styles/main.css";
+import { Navigate } from "react-router-dom";
+import useAuth from "../hooks/useAuth";
 
 export default function Dashboard() {
+    const { isAuthenticated } = useAuth();
+
+    if (!isAuthenticated) {
+        return <Navigate to="/login" />; // Redirect if not logged in
+    }
+
     return (
-        <div className="container">
+        <div>
             <h2>Dashboard 📊</h2>
-            <p>Manage your music, playlists, and explore more!</p>
-            <ul>
-                <li><Link to="/search" className="btn">Search Songs</Link></li>
-                <li><Link to="/album" className="btn">View Album Details</Link></li>
-            </ul>
+            <p>Welcome to your dashboard!</p>
         </div>
     );
 }

@@ -1,17 +1,19 @@
 import { useState } from "react";
-import { login } from "../../api/api";
+import { login as loginAPI } from "../../api/api";
+import useAuth from "../../hooks/useAuth";
 import "../../styles/auth.css";
 
 export default function Login() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const { login } = useAuth();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        const response = await login(email, password);
+        const response = await loginAPI(email, password);
         const data = await response.json();
         if (response.ok) {
-            localStorage.setItem("token", data.token);
+            login(data.token); // Use the hook to set user token
             alert("Login successful!");
         } else {
             alert("Login failed!");
@@ -22,8 +24,20 @@ export default function Login() {
         <div className="auth-container">
             <h2>Login</h2>
             <form onSubmit={handleSubmit}>
-                <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Email" required />
-                <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Password" required />
+                <input
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="Email"
+                    required
+                />
+                <input
+                    type="password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    placeholder="Password"
+                    required
+                />
                 <button type="submit">Login</button>
             </form>
         </div>
