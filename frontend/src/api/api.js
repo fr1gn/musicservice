@@ -1,17 +1,21 @@
-const API_URL = "http://localhost:8080"; // ✅ Ensure this is correct
+const API_URL = process.env.REACT_APP_API_URL || "http://localhost:8080/api";
 
-export const register = async (email, password) => {
-    return fetch(`${API_URL}/api/register`, {
+export const register = (email, password) =>
+    fetch(`${API_URL}/register`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
     });
-};
 
-export const login = async (email, password) => { // ✅ Add missing login function
-    return fetch(`${API_URL}/api/login`, {
+export const login = (email, password) =>
+    fetch(`${API_URL}/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
     });
-};
+
+export const searchSongs = (query) =>
+    fetch(`${API_URL}/search?q=${query}`).then((res) => res.json());
+
+export const getAlbum = (id) =>
+    fetch(`${API_URL}/album?id=${id}`).then((res) => res.json());
