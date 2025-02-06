@@ -148,3 +148,71 @@ input[type="text"], input[type="email"], input[type="password"] {
     font-size: 12px;
   }
 }
+
+.search-container {
+  text-align: center;
+  margin: 20px;
+}
+
+input[type="text"] {
+  width: 80%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+button {
+  background-color: #1db954;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #17a44a;
+}
+
+.song-list {
+  list-style: none;
+  padding: 0;
+  margin-top: 20px;
+}
+
+.song-item {
+  background-color: #181818;
+  padding: 15px;
+  margin: 10px auto;
+  width: 80%;
+  border-radius: 8px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: #fff;
+  transition: background 0.3s ease;
+}
+
+.song-item:hover {
+  background-color: #222;
+}
+
+.no-preview {
+  color: gray;
+  font-style: italic;
+}
+
+.player-container {
+  margin: 20px auto;
+  padding: 15px;
+  background-color: #1e1e1e;
+  border-radius: 8px;
+  width: 80%;
+  text-align: center;
+  color: white;
+}
+
+audio {
+  width: 100%;
+  margin-top: 10px;
+}
