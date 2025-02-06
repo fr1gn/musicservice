@@ -1,5 +1,7 @@
 import { useState } from "react";
 import { login } from "../../api/api";
+import {redirect} from "react-router-dom";
+import {Home} from "../../pages/Home"
 
 export default function Login() {
     const [email, setEmail] = useState("");
@@ -14,6 +16,7 @@ export default function Login() {
             if (response.ok) {
                 localStorage.setItem("token", data.token);
                 alert("Login successful!");  // Success message
+                redirect("/")
                 return;                      // Prevent further execution
             }
 
