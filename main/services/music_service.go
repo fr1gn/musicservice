@@ -3,97 +3,47 @@ package services
 import (
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
-	"net/http"
-	"net/url"
-	"strings"
+	"github.com/go-resty/resty/v2"
+	"log"
 )
 
-const (
-	SpotifyTokenURL = "https://accounts.spotify.com/api/token"
-	SpotifyAPIBase  = "https://api.spotify.com/v1"
-	ClientID        = "edc5364c60c24801a37b93ccc8b6e8ca"
-	ClientSecret    = "ef2b30ae13054e52b0c2c671d74a9521"
-)
+const baseURL = "https://api.deezer.com"
 
-var spotifyAccessToken string
-
-// Get Spotify Access Token
-func getSpotifyAccessToken() error {
-	data := url.Values{}
-	data.Set("grant_type", "client_credentials")
-
-	req, _ := http.NewRequest("POST", SpotifyTokenURL, strings.NewReader(data.Encode()))
-	req.SetBasicAuth(ClientID, ClientSecret)
-	req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
-
-	resp, err := http.DefaultClient.Do(req)
-	if err != nil {
-		return err
-	}
-	defer resp.Body.Close()
-
-	body, _ := ioutil.ReadAll(resp.Body)
-
-	var result map[string]interface{}
-	json.Unmarshal(body, &result)
-
-	token, ok := result["access_token"].(string)
-	if !ok {
-		return fmt.Errorf("failed to get access token")
-	}
-	spotifyAccessToken = token
-	return nil
+type DeezerService struct {
+	client *resty.Client
 }
 
-// Search Songs on Spotify
-func SearchSongs(query string) (map[string]interface{}, error) {
-	if spotifyAccessToken == "" {
-		if err := getSpotifyAccessToken(); err != nil {
-			return nil, err
-		}
+func NewDeezerService() *DeezerService {
+	return &DeezerService{
+		client: resty.New(),
 	}
-
-	url := fmt.Sprintf("%s/search?q=%s&type=track", SpotifyAPIBase, url.QueryEscape(query))
-	req, _ := http.NewRequest("GET", url, nil)
-	req.Header.Add("Authorization", "Bearer "+spotifyAccessToken)
-
-	resp, err := http.DefaultClient.Do(req)
-	if err != nil {
-		return nil, err
-	}
-	defer resp.Body.Close()
-
-	body, _ := ioutil.ReadAll(resp.Body)
-
-	var result map[string]interface{}
-	json.Unmarshal(body, &result)
-
-	return result, nil
 }
 
-// Get Album Details from Spotify
-func GetAlbumDetails(albumID string) (map[string]interface{}, error) {
-	if spotifyAccessToken == "" {
-		if err := getSpotifyAccessToken(); err != nil {
-			return nil, err
-		}
-	}
+type SearchResponse struct {
+	Data []struct {
+		ID     int    `json:"id"`
+		Title  string `json:"title"`
+		Artist struct {
+			Name string `json:"name"`
+		} `json:"artist"`
+	} `json:"data"`
+}
 
-	url := fmt.Sprintf("%s/albums/%s", SpotifyAPIBase, albumID)
-	req, _ := http.NewRequest("GET", url, nil)
-	req.Header.Add("Authorization", "Bearer "+spotifyAccessToken)
+func (ds *DeezerService) SearchTrack(query string) (*SearchResponse, error) {
+	resp, err := ds.client.R().
+		SetQueryParam("q", query).
+		Get(fmt.Sprintf("%s/search", baseURL))
 
-	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
+		log.Println("Error making request to Deezer:", err)
 		return nil, err
 	}
-	defer resp.Body.Close()
 
-	body, _ := ioutil.ReadAll(resp.Body)
+	var searchResponse SearchResponse
+	if err := json.Unmarshal(resp.Body(), &searchResponse); err != nil {
+		log.Println("Error decoding response:", err)
+		return nil, err
+	}
 
-	var album map[string]interface{}
-	json.Unmarshal(body, &album)
-
-	return album, nil
+	return &searchResponse, nil
 }
