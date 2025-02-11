@@ -54,12 +54,6 @@ export default function Home() {
                     ))}
                 </div>
             </main>
-
-            {/* Footer */}
-            <footer className="music-bar">
-                <p>🎶 Now Playing: Summer in the City - The Lovin’ Spoonful</p>
-                <input type="range" min="0" max="100" value="28" className="progress" />
-            </footer>
         </div>
     );
 }
