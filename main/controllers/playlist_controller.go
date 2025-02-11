@@ -7,6 +7,28 @@ import (
 	"net/http"
 )
 
+// ✅ Recently Played Songs
+func GetRecentlyPlayed(w http.ResponseWriter, r *http.Request) {
+	songs := []map[string]string{
+		{"id": "1", "title": "Daily Mix 1", "artist": "Kazakhstan Artist"},
+		{"id": "2", "title": "Billie Eilish Radio", "artist": "Billie Eilish"},
+		{"id": "3", "title": "Cold Case Files", "artist": "PodcastOne"},
+	}
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(songs)
+}
+
+// ✅ Kazakh Songs
+func GetKazakhSongs(w http.ResponseWriter, r *http.Request) {
+	songs := []map[string]string{
+		{"id": "1", "title": "Арман", "artist": "ILHAN"},
+		{"id": "2", "title": "Көк Аспан", "artist": "Нұржан Керменбаев"},
+		{"id": "3", "title": "Туған жер", "artist": "МузАрт"},
+	}
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(songs)
+}
+
 func CreatePlaylist(w http.ResponseWriter, r *http.Request) {
 	var playlist models.Playlist
 	json.NewDecoder(r.Body).Decode(&playlist)

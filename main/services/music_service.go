@@ -12,8 +12,8 @@ import (
 const (
 	SpotifyTokenURL = "https://accounts.spotify.com/api/token"
 	SpotifyAPIBase  = "https://api.spotify.com/v1"
-	ClientID        = "edc5364c60c24801a37b93ccc8b6e8ca"
-	ClientSecret    = "ef2b30ae13054e52b0c2c671d74a9521"
+	ClientID        = "b6733ef8e26b4bb793c538372c915dfd"
+	ClientSecret    = "04051215529846b4a4fffda9e472950f"
 )
 
 var spotifyAccessToken string
