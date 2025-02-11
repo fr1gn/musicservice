@@ -4,7 +4,7 @@ export default function Footer() {
     return (
         <footer className="footer">
             <p>🎶 Gofy Music Service &copy; {new Date().getFullYear()}</p>
-            <p>Developed with ❤️ for music lovers.</p>
+            <p>Developed with ❤️ for music lovers. <a href="#">Learn More</a></p>
         </footer>
     );
 }

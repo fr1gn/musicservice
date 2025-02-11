@@ -1,26 +1,65 @@
-import { Link } from "react-router-dom";
-import useAuth from "../hooks/useAuth";
+import React, { useEffect, useState } from "react";
+import { fetchKazakhSongs, fetchRecentlyPlayed } from "../api/api";
 import "../styles/main.css";
 
 export default function Home() {
-    const { isAuthenticated } = useAuth();
+    const [recentlyPlayed, setRecentlyPlayed] = useState([]);
+    const [kazakhRecommendations, setKazakhRecommendations] = useState([]);
+
+    useEffect(() => {
+        const loadMusic = async () => {
+            const recentData = await fetchRecentlyPlayed();
+            const kazakhData = await fetchKazakhSongs();
+            setRecentlyPlayed(recentData);
+            setKazakhRecommendations(kazakhData);
+        };
+        loadMusic();
+    }, []);
 
     return (
-        <div className="container">
-            <h1>Welcome to Gofy Music Service 🎵</h1>
-            <p>Discover and manage your favorite music with ease!</p>
+        <div className="home-container">
+            {/* Sidebar */}
+            <aside className="sidebar">
+                <h2>🎵 Gofy Music</h2>
+                <nav>
+                    <a href="/">Home</a>
+                    <a href="/search">Search</a>
+                    <a href="/library">Your Library</a>
+                    <a href="/playlist">Create Playlist</a>
+                    <a href="/liked" className="liked-songs">❤️ Liked Songs</a>
+                </nav>
+            </aside>
 
-            {isAuthenticated ? (
-                <div className="home-buttons">
-                    <Link to="/dashboard" className="btn">Go to Dashboard</Link>
-                    <Link to="/profile" className="btn">View Profile</Link>
+            {/* Main Content */}
+            <main className="content">
+                <h2>Recently Played</h2>
+                <div className="grid-container">
+                    {recentlyPlayed.map((song) => (
+                        <div className="card" key={song.id}>
+                            <div className="cover" />
+                            <h4>{song.title}</h4>
+                            <p>{song.artist}</p>
+                        </div>
+                    ))}
                 </div>
-            ) : (
-                <div className="home-buttons">
-                    <Link to="/register" className="btn">Register</Link>
-                    <Link to="/login" className="btn">Login</Link>
+
+                <h2>Made for You (Kazakh Hits)</h2>
+                <div className="grid-container">
+                    {kazakhRecommendations.map((song) => (
+                        <div className="card" key={song.id}>
+                            <div className="cover" />
+                            <h4>{song.title}</h4>
+                            <p>{song.artist}</p>
+                        </div>
+                    ))}
                 </div>
-            )}
+            </main>
+
+            {/* Footer */}
+            <footer className="music-bar">
+                <p>🎶 Now Playing: Summer in the City - The Lovin’ Spoonful</p>
+                <input type="range" min="0" max="100" value="28" className="progress" />
+            </footer>
         </div>
     );
 }

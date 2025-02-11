@@ -3,7 +3,7 @@ import { useAuthContext } from "../context/AuthContext";
 const useAuth = () => {
     const { user, login, logout } = useAuthContext();
 
-    const isAuthenticated = !!user; // Check if user is authenticated
+    const isAuthenticated = !!user || !!localStorage.getItem("user"); // ✅ Check localStorage
 
     return {
         user,

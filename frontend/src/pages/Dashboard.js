@@ -1,7 +1,6 @@
 import { Navigate, Link } from "react-router-dom";
 import useAuth from "../hooks/useAuth";
 import Search from "../components/Music/Search";
-import Player from "../components/Music/Player";
 import "../styles/main.css";
 
 export default function Dashboard() {
@@ -12,19 +11,20 @@ export default function Dashboard() {
     }
 
     return (
-        <div className="container">
-            <h2>Dashboard 📊</h2>
+        <div className="dashboard-container">
+            <h2>📊 Dashboard</h2>
             <p>Manage your music, playlists, and explore more!</p>
 
-            <ul>
-                <li><Link to="/search" className="btn">Search Songs</Link></li>
-                <li><Link to="/album" className="btn">View Album Details</Link></li>
-                <li><Link to="/playlist" className="btn">My Playlists</Link></li>
-            </ul>
+            <div className="dashboard-links">
+                <Link to="/search">🔍 Search Songs</Link>
+                <Link to="/album">🎼 View Album Details</Link>
+                <Link to="/playlist">🎵 My Playlists</Link>
+            </div>
 
-            <h3>🎧 Quick Music Search & Player</h3>
-            <Search />
-            <Player />
+            <div className="music-section">
+                <h3>🎧 Quick Music Search & Player</h3>
+                <Search />
+            </div>
         </div>
     );
 }

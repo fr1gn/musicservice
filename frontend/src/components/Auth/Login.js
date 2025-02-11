@@ -1,24 +1,29 @@
 import { useState } from "react";
 import { login as loginAPI } from "../../api/api";
 import useAuth from "../../hooks/useAuth";
+import { useNavigate } from "react-router-dom";
 import "../../styles/auth.css";
 
 export default function Login() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const { login } = useAuth();
+    const navigate = useNavigate();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        const response = await loginAPI(email, password);
-        const data = await response.json();
-        if (response.ok) {
-            login(data.token); // Use the hook to set user token
-            alert("Login successful!");
-        } else {
-            alert("Login failed!");
+        try {
+            const data = await loginAPI(email, password); // ✅ Use parsed data directly
+            console.log("Parsed Response:", data); // ✅ Debug log
+            login(data); // ✅ Store login data in auth context
+            navigate("/dashboard"); // ✅ Redirect on success
+        } catch (error) {
+            console.error("Login error:", error);
+            alert("Login failed. Please check your credentials.");
         }
     };
+
+
 
     return (
         <div className="auth-container">

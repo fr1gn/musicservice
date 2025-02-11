@@ -1,12 +1,12 @@
 import { useState } from "react";
 import { searchSongs } from "../../api/api";
-import Player from "./Player"; // Importing the player component
+import Player from "./Player";
 import "../../styles/main.css";
 
 export default function Search() {
     const [query, setQuery] = useState("");
     const [results, setResults] = useState([]);
-    const [currentTrack, setCurrentTrack] = useState(null); // Track currently playing
+    const [currentTrack, setCurrentTrack] = useState(null);
     const [error, setError] = useState("");
 
     const handleSearch = async (e) => {
@@ -21,7 +21,7 @@ export default function Search() {
     };
 
     const handlePlay = (track) => {
-        setCurrentTrack(track); // Set the track to play
+        setCurrentTrack(track);
     };
 
     return (
@@ -45,17 +45,14 @@ export default function Search() {
                         <div>
                             <strong>{track.name}</strong> - {track.artists[0].name}
                         </div>
-                        {track.preview_url ? (
-                            <button onClick={() => handlePlay(track)}>▶ Play</button>
-                        ) : (
-                            <span className="no-preview">No Preview Available</span>
-                        )}
+                        <button onClick={() => handlePlay(track)}>▶ Play</button>
                     </li>
                 ))}
             </ul>
 
-            {/* Audio Player */}
-            {currentTrack && <Player track={currentTrack} />}
+            {currentTrack && <Player track={currentTrack} trackList={results} />}
+
+
         </div>
     );
 }

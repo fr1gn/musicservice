@@ -5,22 +5,22 @@ const AuthContext = createContext();
 export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
 
-    // Check if user is already logged in (using localStorage)
+    // ✅ Check for user token on app load
     useEffect(() => {
-        const token = localStorage.getItem("token");
-        if (token) {
-            setUser({ token }); // Set user if token exists
+        const storedUser = JSON.parse(localStorage.getItem("user"));
+        if (storedUser) {
+            setUser(storedUser);
         }
     }, []);
 
-    const login = (token) => {
-        localStorage.setItem("token", token);
-        setUser({ token });
+    const login = (userData) => {
+        setUser(userData);
+        localStorage.setItem("user", JSON.stringify(userData)); // ✅ Persist user data
     };
 
     const logout = () => {
-        localStorage.removeItem("token");
         setUser(null);
+        localStorage.removeItem("user"); // ✅ Clear user data on logout
     };
 
     return (
