@@ -9,13 +9,17 @@ import (
 func RegisterRoutes() *mux.Router {
 	router := mux.NewRouter()
 
+	// Public Routes
 	router.HandleFunc("/api/register", controllers.Register).Methods("POST")
 	router.HandleFunc("/api/login", controllers.Login).Methods("POST")
-
-	// Spotify API Integration
 	router.HandleFunc("/api/search", controllers.SearchSongs).Methods("GET")
 	router.HandleFunc("/api/album", controllers.GetAlbum).Methods("GET")
 
+	// ✅ New Routes
+	router.HandleFunc("/api/recently-played", controllers.GetRecentlyPlayed).Methods("GET")
+	router.HandleFunc("/api/kazakh-songs", controllers.GetKazakhSongs).Methods("GET")
+
+	// Protected Routes
 	protected := router.PathPrefix("/api/playlist").Subrouter()
 	protected.Use(middleware.AuthMiddleware)
 	protected.HandleFunc("/create", controllers.CreatePlaylist).Methods("POST")

@@ -3,6 +3,7 @@ package controllers
 import (
 	"encoding/json"
 	"golang.org/x/crypto/bcrypt"
+	"log"
 	"musicservice/main/database"
 	"musicservice/main/models"
 	"musicservice/main/utils"
@@ -57,16 +58,17 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	}
 
 	token, _ := utils.GenerateToken(creds.Email)
-	json.NewEncoder(w).Encode(map[string]string{"token": token}) // ✅ Return only the token
-}
 
-func DeleteUser(w http.ResponseWriter, r *http.Request) {
-	email := r.URL.Query().Get("email")
-	_, err := database.DB.Exec("DELETE FROM users WHERE email=$1", email)
-	if err != nil {
-		http.Error(w, "User not found", http.StatusNotFound)
-		return
+	// ✅ Add Content-Type header
+	w.Header().Set("Content-Type", "application/json")
+
+	// ✅ Log the response for debugging
+	response := map[string]string{
+		"token":   token,
+		"message": "Login successful",
+		"email":   creds.Email,
 	}
+	log.Printf("Login Response: %+v\n", response) // ✅ Debug log
 
-	w.Write([]byte("User deleted"))
+	json.NewEncoder(w).Encode(response)
 }
