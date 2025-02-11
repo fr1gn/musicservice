@@ -7,6 +7,7 @@ import Login from "./components/Auth/Login";
 import Dashboard from "./pages/Dashboard";
 import Profile from "./pages/Profile";
 import { AuthProvider } from "./context/AuthContext";
+import Playlist from "./components/Music/Playlist";
 import useAuth from "./hooks/useAuth";  // ✅ Added Auth Hook
 import "./styles/main.css";
 
@@ -28,6 +29,7 @@ function App() {
                         <Route path="/login" element={<Login />} />
                         <Route path="/dashboard" element={<ProtectedRoute element={<Dashboard />} />} /> {/* ✅ Protected */}
                         <Route path="/profile" element={<ProtectedRoute element={<Profile />} />} />
+                        <Route path="/playlist" element={<Playlist />} />
                     </Routes>
                 </main>
                 <Footer />
