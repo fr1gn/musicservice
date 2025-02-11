@@ -10,10 +10,7 @@ export default function Player({ track, trackList = [] }) {
     const [currentTrack, setCurrentTrack] = useState(track);
     const [progress, setProgress] = useState(0); // ✅ Track progress
     const [duration, setDuration] = useState(0); // ✅ Track duration
-
-    const token = "BQD2S-aiIqwku7_RI3kENIWMtb0QnAxjGeEX7NF0t6yZ1w5lJPPYt3R4jaq6aV_IVNB3FWdY4FZT0IhhxbPW3wVMDew1dwmelm4SiOIIYvalI4LTh7yDIBxDXWDsksEiaiPxhBtnefwM5BBcFQqaAypr4ZFekziJ--Y45D17e-flqg06_IUiYE9GgggZ1AM5ydMxQqP-pqY8Ure5ItKlU4xvtkyIoNix0iULWGO4_jKzkHUxxjp_hILh1WNPffCz";
-    // Replace with your actual token
-
+    const token = "BQDZZk9eV4Nfjg16r5UvzS79UShzxMSFfGVNdgS9VkpX6RxOyTHL6fuTRkSCGzvCCkeCOHDI38B5tIFDz-pPWC8JzVJmTxbMrTfNBSwVJXA229EB1VCpl6DO8p27EXKQAIGNk9U48c04m5JPEEy5tDrHB2GSWDckbV9kcaS1XXhOMDRp7RXnf2BOJSpb6Dbx0vwjt5mulG5OyW962eUVNpHPpiBLUl9dH-7MbrL4bS8-kkLjtoQS1et7GIqRPUi6"
     useEffect(() => {
         const script = document.createElement("script");
         script.src = "https://sdk.scdn.co/spotify-player.js";
