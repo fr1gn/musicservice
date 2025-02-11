@@ -7,23 +7,19 @@ import (
 	"net/http"
 )
 
-// ✅ Recently Played Songs
 func GetRecentlyPlayed(w http.ResponseWriter, r *http.Request) {
 	songs := []map[string]string{
-		{"id": "1", "title": "Daily Mix 1", "artist": "Kazakhstan Artist"},
-		{"id": "2", "title": "Billie Eilish Radio", "artist": "Billie Eilish"},
-		{"id": "3", "title": "Cold Case Files", "artist": "PodcastOne"},
+		{"id": "1", "title": "Daily Mix 1", "artist": "Kazakhstan Artist", "image": "/images/dailymix.jpg"},
+		{"id": "2", "title": "Billie Eilish Radio", "artist": "Billie Eilish", "image": "/images/chillmix.jpg"},
 	}
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(songs)
 }
 
-// ✅ Kazakh Songs
 func GetKazakhSongs(w http.ResponseWriter, r *http.Request) {
 	songs := []map[string]string{
-		{"id": "1", "title": "Арман", "artist": "ILHAN"},
-		{"id": "2", "title": "Көк Аспан", "artist": "Нұржан Керменбаев"},
-		{"id": "3", "title": "Туған жер", "artist": "МузАрт"},
+		{"id": "1", "title": "Арман", "artist": "ILHAN", "image": "/images/arman.jpg"},
+		{"id": "3", "title": "Туған жер", "artist": "МузАрт", "image": "/images/muzart.jpg"},
 	}
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(songs)
