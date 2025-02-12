@@ -41,28 +41,29 @@ export const searchSongs = async (query) => {
 };
 
 /// ✅ Fetch Recently Played Songs
-export const fetchRecentlyPlayed = async () => {
+export const fetchRecentlyPlayed = async (userId) => {
     try {
-        const response = await fetch(`${API_URL}/recently-played`);
-        if (!response.ok) throw new Error("Failed to fetch recently played");
-        return await response.json();
+        const endpoint = `http://localhost:8080/api/recently-played?user_id=${userId}`;
+        console.log("Fetching Recently Played Songs:", endpoint);
+
+        const response = await fetch(endpoint);
+
+        if (!response.ok) {
+            console.error("Error fetching recently played:", response.statusText);
+            throw new Error("Failed to fetch recently played songs.");
+        }
+
+        const data = await response.json();
+        console.log("Recently Played Songs API Response:", data); // ✅ Debugging
+
+        return data.length > 0 ? data : [];
     } catch (error) {
         console.error("Error fetching recently played:", error);
-        throw error;
+        return [];
     }
 };
 
-// ✅ Fetch Kazakh Songs
-export const fetchKazakhSongs = async () => {
-    try {
-        const response = await fetch(`${API_URL}/kazakh-songs`);
-        if (!response.ok) throw new Error("Failed to fetch Kazakh songs");
-        return await response.json();
-    } catch (error) {
-        console.error("Error fetching Kazakh songs:", error);
-        throw error;
-    }
-};
+
 
 // ✅ Create Playlist (Protected)
 export const createPlaylist = async (token, playlistName) => {
@@ -99,3 +100,32 @@ export const addSongToPlaylist = async (token, playlistId, songId) => {
         throw error;
     }
 };
+
+export const changePassword = async (email, oldPassword, newPassword) => {
+    try {
+        console.log("Calling API:", `${API_URL}/change-password`); // ✅ Remove extra `/api`
+
+        const response = await fetch(`${API_URL}/change-password`, { // ✅ Remove extra `/api`
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email, old_password: oldPassword, new_password: newPassword }),
+        });
+
+        const data = await response.json();
+        if (!response.ok) {
+            console.error("Error changing password:", data.error);
+            throw new Error(data.error || "Failed to update password.");
+        }
+
+        return data;
+    } catch (error) {
+        console.error("Error changing password:", error);
+        throw error;
+    }
+};
+
+
+
+
+
+

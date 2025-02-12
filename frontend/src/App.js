@@ -27,21 +27,28 @@ function App() {
                     <Navbar />
                     <main>
                         <Routes>
-                            <Route path="/" element={<Home />} />
+                            {/* Redirect logged-in users to Dashboard */}
+                            <Route path="/" element={<AuthRedirect />} />
                             <Route path="/register" element={<Register />} />
                             <Route path="/login" element={<Login />} />
                             <Route path="/dashboard" element={<ProtectedRoute element={<Dashboard />} />} />
                             <Route path="/profile" element={<ProtectedRoute element={<Profile />} />} />
-                            <Route path="/playlist" element={<Playlist />} />
+                            <Route path="/playlist" element={<ProtectedRoute element={<Playlist />} />} />
                             <Route path="/search" element={<ProtectedRoute element={<Search />} />} />
                         </Routes>
                     </main>
-                    <Player /> {/* ✅ Global Player */}
+                    <Player /> {/* ✅ Global player */}
                     <Footer />
                 </Router>
             </PlayerProvider>
         </AuthProvider>
     );
+}
+
+// Redirect function for Home page
+function AuthRedirect() {
+    const { isAuthenticated } = useAuth();
+    return isAuthenticated ? <Navigate to="/dashboard" /> : <Home />;
 }
 
 export default App;

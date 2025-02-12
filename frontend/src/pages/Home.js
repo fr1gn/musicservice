@@ -3,16 +3,6 @@ import { fetchKazakhSongs } from "../api/api";
 import "../styles/main.css";
 
 export default function Home() {
-    const [kazakhRecommendations, setKazakhRecommendations] = useState([]);
-
-    useEffect(() => {
-        const loadMusic = async () => {
-            const kazakhData = await fetchKazakhSongs();
-            setKazakhRecommendations(kazakhData);
-        };
-        loadMusic();
-    }, []);
-
     return (
         <div className="home-container">
             {/* Main Content */}

@@ -448,6 +448,42 @@ body {
   margin-left: 10px;
 }
 
+/* Profile Page */
+.profile-pic {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  display: block;
+  margin: 10px auto;
+}
+
+/* Password Change Form */
+form {
+  display: flex;
+  flex-direction: column;
+  max-width: 300px;
+  margin: auto;
+}
+
+input {
+  padding: 10px;
+  margin: 5px 0;
+  border-radius: 5px;
+}
+
+button {
+  background-color: #1db954;
+  color: white;
+  padding: 10px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #17a44a;
+}
+
 
 
 .no-preview {
