@@ -27,9 +27,25 @@ func GetKazakhSongs(w http.ResponseWriter, r *http.Request) {
 
 func CreatePlaylist(w http.ResponseWriter, r *http.Request) {
 	var playlist models.Playlist
-	json.NewDecoder(r.Body).Decode(&playlist)
-	database.DB.Exec("INSERT INTO playlists (name, user_id) VALUES ($1, $2)", playlist.Name, playlist.UserID)
-	w.WriteHeader(http.StatusCreated)
+	err := json.NewDecoder(r.Body).Decode(&playlist)
+	if err != nil {
+		http.Error(w, "Invalid playlist data", http.StatusBadRequest)
+		return
+	}
+
+	// Insert into the database
+	result, err := database.DB.Exec("INSERT INTO playlists (name, user_id) VALUES ($1, $2)", playlist.Name, playlist.UserID)
+	if err != nil {
+		http.Error(w, "Failed to create playlist", http.StatusInternalServerError)
+		return
+	}
+
+	// Return success message with inserted ID
+	playlistID, _ := result.LastInsertId()
+	json.NewEncoder(w).Encode(map[string]interface{}{
+		"message": "Playlist created successfully",
+		"id":      playlistID,
+	})
 }
 
 func AddSongToPlaylist(w http.ResponseWriter, r *http.Request) {

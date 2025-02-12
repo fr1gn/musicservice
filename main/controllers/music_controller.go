@@ -20,7 +20,8 @@ func SearchSongs(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	json.NewEncoder(w).Encode(result)
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(result) // ✅ Ensure JSON response
 }
 
 // Get Album Details using Spotify API
