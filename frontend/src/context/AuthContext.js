@@ -5,29 +5,29 @@ const AuthContext = createContext();
 export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
 
-    // ✅ Check for user token on app load
     useEffect(() => {
         const storedUser = JSON.parse(localStorage.getItem("user"));
         if (storedUser) {
-            setUser(storedUser);
+            setUser(storedUser); // ✅ Correct usage here
         }
     }, []);
 
     const login = (userData) => {
         setUser(userData);
-        localStorage.setItem("user", JSON.stringify(userData)); // ✅ Persist user data
+        localStorage.setItem("user", JSON.stringify(userData));
     };
 
     const logout = () => {
         setUser(null);
-        localStorage.removeItem("user"); // ✅ Clear user data on logout
+        localStorage.removeItem("user");
     };
 
     return (
-        <AuthContext.Provider value={{ user, login, logout }}>
+        <AuthContext.Provider value={{ user, setUser, login, logout }}> {/* ✅ Add setUser here */}
             {children}
         </AuthContext.Provider>
     );
 };
+
 
 export const useAuthContext = () => useContext(AuthContext);

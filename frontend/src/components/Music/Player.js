@@ -1,18 +1,20 @@
 import { useEffect, useState } from "react";
+import { usePlayer } from "../../context/PlayerContext";
 import "../../styles/main.css";
 
-export default function Player({ track, trackList = [] }) {
+export default function Player() {
+    const { currentTrack, isPlaying, pauseTrack, playTrack, trackList, token } = usePlayer();
     const [player, setPlayer] = useState(null);
-    const [isPlaying, setIsPlaying] = useState(false);
-    const [volume, setVolume] = useState(0.8);
     const [deviceId, setDeviceId] = useState(null);
-    const [currentIndex, setCurrentIndex] = useState(trackList.indexOf(track) || 0);
-    const [currentTrack, setCurrentTrack] = useState(track);
-    const [progress, setProgress] = useState(0); // ✅ Track progress
-    const [duration, setDuration] = useState(0); // ✅ Track duration
-    const token = "BQCWOeMqXmeoRf3mwUSUpN84n-YQ6TOmOIJP83JHkKIQfW7yPyKvm0_MyyUQIweYVq00p870mXje-hyEZoRdXV41hj6iV9RXkbbXYzp_kzMyWrDsVlhAiDQ3_pSSQwERGoKVV1PGEbiZXhZmeJdfcqxzZ4qGKs1FvOgjQ8nzbFg8CBC5J2Ba-x3ySZhVkN7QeTA6f7N87DQgXshE0ByUdAML_PL-joneGM8aYm8HqcaI-e0kuK9fcK96-thWrLhu"
+    const [volume, setVolume] = useState(0.8);
+    const [progress, setProgress] = useState(0);
+    const [duration, setDuration] = useState(0);
+    const [shuffle, setShuffle] = useState(false);
+    const [repeat, setRepeat] = useState(false);
 
     useEffect(() => {
+        if (!token) return;
+
         const script = document.createElement("script");
         script.src = "https://sdk.scdn.co/spotify-player.js";
         script.async = true;
@@ -22,104 +24,60 @@ export default function Player({ track, trackList = [] }) {
             const spotifyPlayer = new window.Spotify.Player({
                 name: "Gofy Music Player",
                 getOAuthToken: cb => cb(token),
-                volume: volume,
+                volume,
             });
 
-            spotifyPlayer.connect();
-            setPlayer(spotifyPlayer);
-
             spotifyPlayer.addListener("ready", ({ device_id }) => {
+                console.log("Player ready with Device ID:", device_id);
                 setDeviceId(device_id);
             });
 
             spotifyPlayer.addListener("player_state_changed", (state) => {
                 if (state) {
-                    setIsPlaying(!state.paused);
                     setProgress(state.position);
-                    setDuration(state.duration); // ✅ Get track duration
+                    setDuration(state.duration);
+                    if (state.paused) pauseTrack();
                 }
             });
+
+            spotifyPlayer.connect();
+            setPlayer(spotifyPlayer);
         };
 
         return () => {
-            if (player) {
-                player.disconnect();
-            }
+            if (player) player.disconnect();
         };
-    }, []);
+    }, [token]);
 
-    useEffect(() => {
-        if (track && player && deviceId) {
-            stopCurrentTrack();
-            playTrack(deviceId, track.uri);
-            setCurrentTrack(track);
-            setCurrentIndex(trackList.indexOf(track));
-        }
-    }, [track]);
-
-    const playTrack = async (device_id, trackUri) => {
-        try {
-            await fetch(`https://api.spotify.com/v1/me/player/play?device_id=${device_id}`, {
-                method: "PUT",
-                body: JSON.stringify({ uris: [trackUri] }),
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: `Bearer ${token}`,
-                },
-            });
-        } catch (error) {
-            console.error("Error playing track:", error);
-        }
-    };
-
-    const stopCurrentTrack = async () => {
-        try {
-            await fetch(`https://api.spotify.com/v1/me/player/pause?device_id=${deviceId}`, {
-                method: "PUT",
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: `Bearer ${token}`,
-                },
-            });
-        } catch (error) {
-            console.error("Error stopping track:", error);
-        }
-    };
-
-    const handlePlayPause = async () => {
-        if (player) {
-            isPlaying ? await player.pause() : await player.resume();
-        }
-    };
-
-    const handleVolumeChange = (e) => {
-        const newVolume = parseFloat(e.target.value);
-        setVolume(newVolume);
-        if (player) {
-            player.setVolume(newVolume);
+    const handlePlayPause = () => {
+        if (isPlaying) {
+            pauseTrack();
+            player.pause();
+        } else if (currentTrack && deviceId) {
+            playTrack(currentTrack, trackList);
+            player.resume();
         }
     };
 
     const handleNext = () => {
-        const nextIndex = (currentIndex + 1) % trackList.length;
-        setCurrentIndex(nextIndex);
-        setCurrentTrack(trackList[nextIndex]);
-        stopCurrentTrack();
-        playTrack(deviceId, trackList[nextIndex]?.uri);
+        const currentIndex = trackList.findIndex(track => track.id === currentTrack.id);
+        const nextIndex = shuffle
+            ? Math.floor(Math.random() * trackList.length)
+            : (currentIndex + 1) % trackList.length;
+
+        playTrack(trackList[nextIndex], trackList);
     };
 
     const handlePrevious = () => {
+        const currentIndex = trackList.findIndex(track => track.id === currentTrack.id);
         const prevIndex = (currentIndex - 1 + trackList.length) % trackList.length;
-        setCurrentIndex(prevIndex);
-        setCurrentTrack(trackList[prevIndex]);
-        stopCurrentTrack();
-        playTrack(deviceId, trackList[prevIndex]?.uri);
+        playTrack(trackList[prevIndex], trackList);
     };
 
-    const handleSeek = async (e) => {
-        const seekPosition = parseInt(e.target.value);
-        setProgress(seekPosition);
-        await player.seek(seekPosition); // ✅ Seek to the new position
+    const handleSeek = (e) => {
+        const seekTime = parseInt(e.target.value);
+        setProgress(seekTime);
+        player.seek(seekTime);
     };
 
     const formatTime = (ms) => {
@@ -128,25 +86,11 @@ export default function Player({ track, trackList = [] }) {
         return `${minutes}:${seconds < 10 ? "0" : ""}${seconds}`;
     };
 
-    if (!currentTrack) return <p>Select a song to play.</p>;
+    if (!currentTrack) return null;
 
     return (
-        <div className="player-container">
+        <div className="global-player">
             <h4>🎵 Now Playing: {currentTrack.name} - {currentTrack.artists[0].name}</h4>
-
-            {/* ✅ Seek Bar */}
-            <div className="progress-bar">
-                <span>{formatTime(progress)}</span>
-                <input
-                    type="range"
-                    min="0"
-                    max={duration}
-                    value={progress}
-                    onChange={handleSeek}
-                    className="seek-bar"
-                />
-                <span>{formatTime(duration)}</span>
-            </div>
 
             <div className="player-controls">
                 <button onClick={handlePrevious}>⏮️ Prev</button>
@@ -154,14 +98,35 @@ export default function Player({ track, trackList = [] }) {
                     {isPlaying ? "⏸️ Pause" : "▶️ Play"}
                 </button>
                 <button onClick={handleNext}>⏭️ Next</button>
+                <button onClick={() => setShuffle(!shuffle)}>
+                    {shuffle ? "🔀 Shuffle On" : "🔀 Shuffle Off"}
+                </button>
+                <button onClick={() => setRepeat(!repeat)}>
+                    {repeat ? "🔁 Repeat On" : "🔁 Repeat Off"}
+                </button>
+            </div>
 
+            <div className="progress-container">
+                <span>{formatTime(progress)}</span>
+                <input
+                    type="range"
+                    min="0"
+                    max={duration}
+                    value={progress}
+                    onChange={handleSeek}
+                    className="progress-bar"
+                />
+                <span>{formatTime(duration)}</span>
+            </div>
+
+            <div className="volume-container">
                 <input
                     type="range"
                     min="0"
                     max="1"
                     step="0.01"
                     value={volume}
-                    onChange={handleVolumeChange}
+                    onChange={(e) => setVolume(parseFloat(e.target.value))}
                     className="volume-slider"
                 />
             </div>

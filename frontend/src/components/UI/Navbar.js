@@ -11,7 +11,7 @@ export default function Navbar() {
                 <Link to="/">🎵 Gofy Music</Link>
             </div>
             <ul className="navbar-links">
-                <li><Link to="/">Home</Link></li>
+                {!isAuthenticated && <li><Link to="/">Home</Link></li>}
                 {isAuthenticated && <li><Link to="/dashboard">Dashboard</Link></li>}
                 {isAuthenticated && <li><Link to="/profile">Profile</Link></li>}
                 {!isAuthenticated && <li><Link to="/login">Login</Link></li>}

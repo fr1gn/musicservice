@@ -6,34 +6,40 @@ import Register from "./components/Auth/Register";
 import Login from "./components/Auth/Login";
 import Dashboard from "./pages/Dashboard";
 import Profile from "./pages/Profile";
-import { AuthProvider } from "./context/AuthContext";
 import Playlist from "./components/Music/Playlist";
-import useAuth from "./hooks/useAuth";  // ✅ Added Auth Hook
+import Search from "./components/Music/Search";
+import Player from "./components/Music/Player";
+import { AuthProvider } from "./context/AuthContext";
+import { PlayerProvider } from "./context/PlayerContext";
+import useAuth from "./hooks/useAuth";
 import "./styles/main.css";
 
-// ✅ Protected Route Wrapper
 const ProtectedRoute = ({ element }) => {
     const { isAuthenticated } = useAuth();
-    return isAuthenticated ? element : <Navigate to = "/login" />;
+    return isAuthenticated ? element : <Navigate to="/login" />;
 };
 
 function App() {
     return (
         <AuthProvider>
-            <Router>
-                <Navbar />
-                <main>
-                    <Routes>
-                        <Route path="/" element={<Home />} />
-                        <Route path="/register" element={<Register />} />
-                        <Route path="/login" element={<Login />} />
-                        <Route path="/dashboard" element={<ProtectedRoute element={<Dashboard />} />} /> {/* ✅ Protected */}
-                        <Route path="/profile" element={<ProtectedRoute element={<Profile />} />} />
-                        <Route path="/playlist" element={<Playlist />} />
-                    </Routes>
-                </main>
-                <Footer />
-            </Router>
+            <PlayerProvider>
+                <Router>
+                    <Navbar />
+                    <main>
+                        <Routes>
+                            <Route path="/" element={<Home />} />
+                            <Route path="/register" element={<Register />} />
+                            <Route path="/login" element={<Login />} />
+                            <Route path="/dashboard" element={<ProtectedRoute element={<Dashboard />} />} />
+                            <Route path="/profile" element={<ProtectedRoute element={<Profile />} />} />
+                            <Route path="/playlist" element={<Playlist />} />
+                            <Route path="/search" element={<ProtectedRoute element={<Search />} />} />
+                        </Routes>
+                    </main>
+                    <Player /> {/* ✅ Global Player */}
+                    <Footer />
+                </Router>
+            </PlayerProvider>
         </AuthProvider>
     );
 }
