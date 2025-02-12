@@ -2,17 +2,41 @@ package controllers
 
 import (
 	"encoding/json"
+	"log"
 	"musicservice/main/database"
 	"musicservice/main/models"
 	"net/http"
 )
 
 func GetRecentlyPlayed(w http.ResponseWriter, r *http.Request) {
-	songs := []map[string]string{
-		{"id": "1", "title": "Daily Mix 1", "artist": "Kazakhstan Artist", "image": "/images/dailymix.jpg"},
-		{"id": "2", "title": "Billie Eilish Radio", "artist": "Billie Eilish", "image": "/images/chillmix.jpg"},
+	userID := r.URL.Query().Get("user_id")
+	if userID == "" {
+		http.Error(w, `{"error": "User ID is required"}`, http.StatusBadRequest)
+		log.Println("Error: Missing user_id parameter")
+		return
 	}
-	w.Header().Set("Content-Type", "application/json")
+
+	log.Println("Fetching recently played songs for user:", userID)
+
+	rows, err := database.DB.Query("SELECT title, artist FROM recently_played WHERE user_id=$1 ORDER BY played_at DESC LIMIT 10", userID)
+	if err != nil {
+		http.Error(w, `{"error": "Failed to fetch recently played songs"}`, http.StatusInternalServerError)
+		log.Println("Database query error:", err)
+		return
+	}
+	defer rows.Close()
+
+	var songs []map[string]string
+	for rows.Next() {
+		var title, artist string
+		rows.Scan(&title, &artist)
+		songs = append(songs, map[string]string{"title": title, "artist": artist})
+	}
+
+	if len(songs) == 0 {
+		log.Println("No recently played songs found for user:", userID)
+	}
+
 	json.NewEncoder(w).Encode(songs)
 }
 
