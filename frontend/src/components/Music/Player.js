@@ -8,7 +8,7 @@ export default function Player() {
     const [duration, setDuration] = useState(0);
     const [shuffle, setShuffle] = useState(false);
     const [repeat, setRepeat] = useState(false);
-    const [isPaused, setIsPaused] = useState(true); // ✅ Tracks Play/Pause state for UI
+    const [isPaused, setIsPaused] = useState(true);
 
     useEffect(() => {
         if (!token) return;
