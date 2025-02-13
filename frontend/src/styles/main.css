@@ -272,6 +272,58 @@ body {
 .playlist-container ul {
   padding-bottom: 20px;
 }
+
+/* Стили для Select */
+select {
+  background-color: #222; /* Темный фон */
+  color: #fff; /* Белый текст */
+  padding: 8px 12px;
+  border: 1px solid #444; /* Серый бордер */
+  border-radius: 5px;
+  font-size: 16px;
+  outline: none;
+  cursor: pointer;
+}
+
+select option {
+  background-color: #222;
+  color: #fff;
+}
+
+select:hover {
+  border-color: #666;
+}
+
+/* Стили для Label */
+label {
+  font-size: 18px;
+  color: #fff;
+  margin-right: 10px;
+}
+
+/* Стили для списка плейлистов */
+.playlist-list {
+  list-style: none;
+  padding: 0;
+  margin-top: 10px;
+}
+
+.playlist-list li {
+  background-color: #333;
+  color: #fff;
+  padding: 10px;
+  margin: 5px 0;
+  border-radius: 5px;
+  transition: background 0.3s;
+}
+
+.playlist-list li:hover {
+  background-color: #444;
+  cursor: pointer;
+}
+
+
+
 /* ===== FOOTER ===== */
 /* Adjust Footer to fit above the music player */
 .footer {
