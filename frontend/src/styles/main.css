@@ -733,3 +733,60 @@ button:hover {
   background-color: #1ed760;
   transform: scale(1.05);
 }
+.album-container {
+  text-align: center;
+  padding: 20px;
+}
+
+.fetch-btn {
+  background-color: #1db954;
+  color: white;
+  padding: 12px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.3s ease;
+}
+
+.fetch-btn:hover {
+  background-color: #17a44a;
+}
+
+.albums {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.album-card {
+  background-color: #282828;
+  padding: 15px;
+  border-radius: 10px;
+  text-align: center;
+  width: 200px;
+  transition: transform 0.2s, background-color 0.3s;
+}
+
+.album-card:hover {
+  transform: scale(1.05);
+  background-color: #383838;
+}
+
+.album-card img {
+  width: 100%;
+  border-radius: 8px;
+}
+
+.album-card h3 {
+  font-size: 16px;
+  margin: 10px 0;
+  color: white;
+}
+
+.album-card p {
+  font-size: 14px;
+  color: #b3b3b3;
+}
