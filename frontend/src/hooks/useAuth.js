@@ -14,11 +14,20 @@ const useAuth = () => {
     }, [setUser]);
 
     const login = (userData) => {
-        setUser(userData);  // ✅ Updates auth state
-        localStorage.setItem("user", JSON.stringify(userData)); // ✅ Saves to storage
-        setIsAuthenticated(true);  // ✅ Triggers navbar update
-        window.dispatchEvent(new Event("storage")); // ✅ Forces navbar update
+        console.log("🔹 Saving user data:", userData); // ✅ Лог для проверки
+
+        if (!userData.id) {
+            console.error("❌ Login response is missing user ID!", userData);
+            return;
+        }
+
+        setUser(userData);
+        localStorage.setItem("user", JSON.stringify(userData));
+        setIsAuthenticated(true);
+        window.dispatchEvent(new Event("storage"));
     };
+
+
 
     const logout = () => {
         setUser(null);  // ✅ Resets state

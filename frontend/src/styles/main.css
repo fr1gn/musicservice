@@ -164,6 +164,114 @@ body {
   cursor: pointer;
 }
 
+/* Контейнер плейлистов */
+.playlist-container {
+  max-width: 800px;
+  margin: 20px auto;
+  padding: 20px;
+  background-color: #1e1e1e;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  overflow-y: auto;
+  max-height: calc(100vh - 200px);
+}
+
+/* Список плейлистов */
+.playlist-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 15px;
+  margin: 10px 0;
+  border-radius: 8px;
+  background-color: #252525;
+  transition: 0.3s;
+  position: relative;
+}
+
+/* Иконка плейлиста */
+.playlist-item i {
+  font-size: 20px;
+  color: #a855f7;
+  margin-right: 10px;
+}
+
+/* Наведение */
+.playlist-item:hover {
+  background-color: #333;
+  transform: scale(1.02);
+  cursor: pointer;
+}
+
+/* Кнопки управления плейлистами */
+.playlist-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.playlist-actions button {
+  background: #3b82f6;
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.playlist-actions button:hover {
+  background: #2563eb;
+}
+
+/* Удаление */
+.playlist-actions .delete-btn {
+  background: #ef4444;
+}
+
+.playlist-actions .delete-btn:hover {
+  background: #dc2626;
+}
+
+/* Кнопка создания плейлиста */
+.create-playlist-button {
+  background: #22c55e;
+  color: white;
+  border: none;
+  padding: 12px 20px;
+  border-radius: 8px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: 0.3s;
+  display: block;
+  width: 100%;
+  margin: 10px 0;
+}
+
+.create-playlist-button:hover {
+  background: #16a34a;
+}
+
+/* Поле ввода */
+.playlist-input {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #333;
+  border-radius: 8px;
+  background-color: #252525;
+  color: white;
+  font-size: 16px;
+  margin-bottom: 10px;
+}
+
+.playlist-input::placeholder {
+  color: #bbb;
+}
+
+/* Фикс нижнего плейлиста */
+.playlist-container ul {
+  padding-bottom: 20px;
+}
 /* ===== FOOTER ===== */
 /* Adjust Footer to fit above the music player */
 .footer {
