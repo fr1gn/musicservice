@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"github.com/gorilla/mux"
 	"musicservice/main/controllers"
-	"musicservice/main/middleware"
 )
 
 func RegisterRoutes() *mux.Router {
@@ -20,12 +19,10 @@ func RegisterRoutes() *mux.Router {
 	// ✅ New Routes
 	router.HandleFunc("/api/recently-played", controllers.GetRecentlyPlayed).Methods("GET")
 	router.HandleFunc("/api/kazakh-songs", controllers.GetKazakhSongs).Methods("GET")
+	router.HandleFunc("/api/playlist/create", controllers.CreatePlaylist).Methods("POST")
 
 	// Protected Routes
-	protected := router.PathPrefix("/api/playlist").Subrouter()
-	protected.Use(middleware.AuthMiddleware)
-	protected.HandleFunc("/create", controllers.CreatePlaylist).Methods("POST")
-	protected.HandleFunc("/add-song", controllers.AddSongToPlaylist).Methods("POST")
+	router.HandleFunc("/add-song", controllers.AddSongToPlaylist).Methods("POST")
 
 	// ✅ Print all registered routes
 	fmt.Println("Registered Routes:")
