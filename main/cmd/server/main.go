@@ -12,9 +12,13 @@ func main() {
 	database.Connect()
 	router := routes.RegisterRoutes()
 
+	// Serve static files (если нужно)
 	fs := http.FileServer(http.Dir("../../controllers/images/"))
-	http.Handle("/images/", http.StripPrefix("/images/", fs))
+	router.Handle("/images/", http.StripPrefix("/images/", fs))
+
+	// ✅ Запускаем сервер с CORS middleware
+	handler := middleware.EnableCORS(router)
 
 	log.Println("Server started on :8080")
-	log.Fatal(http.ListenAndServe(":8080", middleware.EnableCORS(router)))
+	log.Fatal(http.ListenAndServe(":8080", handler)) // ✅ Теперь CORS работает
 }
