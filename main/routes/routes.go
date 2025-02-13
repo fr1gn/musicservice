@@ -15,6 +15,7 @@ func RegisterRoutes() *mux.Router {
 	router.HandleFunc("/api/change-password", controllers.Changepassword).Methods("POST")
 	router.HandleFunc("/api/search", controllers.SearchSongs).Methods("GET")
 	router.HandleFunc("/api/album", controllers.GetAlbum).Methods("GET")
+	router.HandleFunc("/api/fixed-albums", controllers.GetFixedAlbums).Methods("GET") // ✅ New Route
 
 	// ✅ New Routes
 	router.HandleFunc("/api/recently-played", controllers.GetRecentlyPlayed).Methods("GET")
