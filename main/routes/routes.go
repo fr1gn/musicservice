@@ -23,6 +23,11 @@ func RegisterRoutes() *mux.Router {
 
 	// Protected Routes
 	router.HandleFunc("/add-song", controllers.AddSongToPlaylist).Methods("POST")
+	router.HandleFunc("/api/playlists", controllers.GetPlaylists).Methods("GET")
+	router.HandleFunc("/api/playlist/update", controllers.UpdatePlaylist).Methods("PUT")
+	router.HandleFunc("/api/playlist/delete", controllers.DeletePlaylist).Methods("DELETE")
+	router.HandleFunc("/api/playlist/add-song", controllers.AddSongToPlaylist).Methods("POST")
+	router.HandleFunc("/api/playlist/songs", controllers.GetPlaylistSongs).Methods("GET")
 
 	// ✅ Print all registered routes
 	fmt.Println("Registered Routes:")

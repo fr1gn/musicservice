@@ -62,8 +62,15 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	// ✅ Add Content-Type header
 	w.Header().Set("Content-Type", "application/json")
 
+	err = database.DB.Get(&user, "SELECT id, email FROM users WHERE email=$1", creds.Email)
+	if err != nil {
+		http.Error(w, `{"error": "Invalid email or password"}`, http.StatusUnauthorized)
+		return
+	}
+
 	// ✅ Log the response for debugging
-	response := map[string]string{
+	response := map[string]interface{}{
+		"id":      user.ID,
 		"token":   token,
 		"message": "Login successful",
 		"email":   creds.Email,
