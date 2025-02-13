@@ -1,31 +1,60 @@
-import { useState } from "react";
-import { getAlbum } from "../../api/api";
-import "../../styles/music.css";
+import React, { useState } from "react";
 
-export default function Album() {
-    const [albumID, setAlbumID] = useState("");
-    const [album, setAlbum] = useState(null);
+const fixedAlbums = [
+    {
+        id: "1",
+        name: "Abbey Road",
+        artist: "The Beatles",
+        image: "https://i.scdn.co/image/ab67616d00001e02a3b8a15e31f53f314a2093cb",
+    },
+    {
+        id: "2",
+        name: "Thriller",
+        artist: "Michael Jackson",
+        image: "https://i.scdn.co/image/ab67616d00001e02a3b8a15e31f53f314a2093cb",
+    },
+    {
+        id: "3",
+        name: "Random Access Memories",
+        artist: "Daft Punk",
+        image: "https://i.scdn.co/image/ab67616d00001e024b23f8c8e9f947c8e7338e25",
+    },
+    {
+        id: "4",
+        name: "DAMN.",
+        artist: "Kendrick Lamar",
+        image: "https://i.scdn.co/image/ab67616d00001e0273b7e3c21ebde28c09a74c42",
+    },
+    {
+        id: "5",
+        name: "Back to Black",
+        artist: "Amy Winehouse",
+        image: "https://i.scdn.co/image/ab67616d00001e02d4c5467b5a85c0c5a0f2072e",
+    },
+];
 
-    const handleGetAlbum = async (e) => {
-        e.preventDefault();
-        const data = await getAlbum(albumID);
-        setAlbum(data);
+const Album = () => {
+    const [albums, setAlbums] = useState([]);
+
+    const handleViewAlbumDetails = () => {
+        setAlbums(fixedAlbums);
     };
 
     return (
-        <div className="container">
+        <div>
             <h2>Album Details</h2>
-            <form onSubmit={handleGetAlbum}>
-                <input type="text" value={albumID} onChange={(e) => setAlbumID(e.target.value)} placeholder="Enter Album ID" />
-                <button type="submit">Get Album</button>
-            </form>
-            {album && (
-                <div>
-                    <h3>{album.name}</h3>
-                    <p>By {album.artists.map(artist => artist.name).join(", ")}</p>
-                    <img src={album.images[0].url} alt={album.name} width="200" />
-                </div>
-            )}
+            <button onClick={handleViewAlbumDetails}>View Album Details</button>
+            <div>
+                {albums.map((album) => (
+                    <div key={album.id}>
+                        <h3>{album.name}</h3>
+                        <p>{album.artist}</p>
+                        <img src={album.image} alt={album.name} width={200} />
+                    </div>
+                ))}
+            </div>
         </div>
     );
-}
+};
+
+export default Album;
