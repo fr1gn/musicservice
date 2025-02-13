@@ -42,26 +42,23 @@ export const searchSongs = async (query) => {
 
 /// ✅ Fetch Recently Played Songs
 export const fetchRecentlyPlayed = async (userId) => {
+    if (!userId) {
+        console.error("❌ Error: User ID is missing in fetchRecentlyPlayed()");
+        return [];
+    }
+
     try {
-        const endpoint = `http://localhost:8080/api/recently-played?user_id=${userId}`;
-        console.log("Fetching Recently Played Songs:", endpoint);
-
-        const response = await fetch(endpoint);
-
-        if (!response.ok) {
-            console.error("Error fetching recently played:", response.statusText);
-            throw new Error("Failed to fetch recently played songs.");
-        }
-
+        console.log(`📡 Fetching Recently Played for User ID: ${userId}`);
+        const response = await fetch(`http://localhost:8080/api/recently-played?user_id=${userId}`);
         const data = await response.json();
-        console.log("Recently Played Songs API Response:", data); // ✅ Debugging
-
-        return data.length > 0 ? data : [];
+        return data;
     } catch (error) {
-        console.error("Error fetching recently played:", error);
+        console.error("❌ Failed to fetch recently played songs:", error);
         return [];
     }
 };
+
+
 
 
 

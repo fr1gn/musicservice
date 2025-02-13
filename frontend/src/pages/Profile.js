@@ -5,36 +5,47 @@ import { changePassword, fetchRecentlyPlayed } from "../api/api";
 import "../styles/main.css";
 
 export default function Profile() {
-    const { isAuthenticated, user } = useAuth();
+    const { isAuthenticated, user, loading } = useAuth();
     const [oldPassword, setOldPassword] = useState("");
     const [newPassword, setNewPassword] = useState("");
     const [recentlyPlayed, setRecentlyPlayed] = useState([]);
+    const [loadingSongs, setLoadingSongs] = useState(true);
+    const [error, setError] = useState(null);
 
     useEffect(() => {
         const loadRecentlyPlayed = async () => {
+            if (!user || !user.id) {
+                console.warn("⚠️ User ID is missing, skipping fetch...");
+                return;
+            }
+
             try {
-                const data = await fetchRecentlyPlayed(user?.id);
+                console.log(`🎵 Fetching Recently Played Songs for User ID: ${user.id}`);
+                const data = await fetchRecentlyPlayed(user.id);
                 setRecentlyPlayed(data);
             } catch (error) {
                 console.error("Error fetching recently played:", error);
             }
         };
+
         if (isAuthenticated) loadRecentlyPlayed();
     }, [isAuthenticated, user]);
+
 
     const handleChangePassword = async (e) => {
         e.preventDefault();
         try {
             await changePassword(user?.email, oldPassword, newPassword);
-            alert("Password updated successfully!");
+            alert("✅ Password updated successfully!");
             setOldPassword("");
             setNewPassword("");
         } catch (error) {
-            alert("Failed to update password.");
+            alert("❌ Failed to update password.");
         }
     };
 
     if (!isAuthenticated) return <Navigate to="/login" />;
+    if (loading) return <p>Loading user data...</p>; // ✅ Ожидаем загрузку user
 
     return (
         <div className="container">
@@ -50,15 +61,19 @@ export default function Profile() {
             </form>
 
             <h3>🎵 Recently Played Songs</h3>
-            <ul>
-                {recentlyPlayed.length > 0 ? (
-                    recentlyPlayed.map((song, index) => (
+            {loadingSongs ? (
+                <p>Loading recently played songs...</p>
+            ) : error ? (
+                <p style={{ color: "red" }}>{error}</p>
+            ) : recentlyPlayed.length > 0 ? (
+                <ul>
+                    {recentlyPlayed.map((song, index) => (
                         <li key={index}><strong>{song.title}</strong> - {song.artist}</li>
-                    ))
-                ) : (
-                    <p>No recently played songs found.</p>
-                )}
-            </ul>
+                    ))}
+                </ul>
+            ) : (
+                <p>No recently played songs found.</p>
+            )}
         </div>
     );
 }

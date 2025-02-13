@@ -1,6 +1,33 @@
 import React, { useState, useEffect } from 'react';
 import useAuth from "../../hooks/useAuth"; // ✅ Import remains the same
 
+// ✅ Move createPlaylist function OUTSIDE the component
+export const createPlaylist = async (playlistName) => {
+    const user = JSON.parse(localStorage.getItem("user"));
+    if (!user || !user.id) {
+        console.error("❌ Error: User ID is missing, cannot create playlist.");
+        return;
+    }
+
+    try {
+        const response = await fetch("http://localhost:8080/api/playlist/create", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ name: playlistName, user_id: user.id }),
+        });
+
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.error || "Failed to create playlist");
+
+        console.log("✅ Playlist created successfully:", data);
+        return data;
+    } catch (error) {
+        console.error("❌ Error creating playlist:", error);
+    }
+};
+
 
 const PlaylistManager = () => {
     const { user } = useAuth(); // ✅ Correct: Inside the functional component
@@ -14,11 +41,9 @@ const PlaylistManager = () => {
         }
     }, []);
 
-
     if (!user) {
         return <p>Please log in to view your playlists.</p>;
     }
-
 
     const fetchPlaylists = async () => {
         if (!user || !user.id) { // ✅ Check if user exists
@@ -39,42 +64,13 @@ const PlaylistManager = () => {
         }
     };
 
-
-    const createPlaylist = async () => {
-        try {
-            const token = localStorage.getItem('user') ? JSON.parse(localStorage.getItem('user')).token : '';
-
-            const response = await fetch('/api/playlist/create', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}` // ✅ Add this line
-                },
-                body: JSON.stringify({ name: newPlaylistName, user_id: user.id }),
-            });
-
-            const contentType = response.headers.get("content-type");
-
-            if (!response.ok) {
-                if (contentType && contentType.includes("application/json")) {
-                    const errorData = await response.json();
-                    throw new Error(errorData.error || 'Error creating playlist');
-                } else {
-                    const errorText = await response.text();
-                    throw new Error(`Unexpected response: ${errorText}`);
-                }
-            }
-
-            const data = await response.json();
-            alert('Playlist created successfully!');
-            fetchPlaylists();
-            setNewPlaylistName('');
-        } catch (error) {
-            console.error('Error:', error);
-            alert('Failed to create playlist: ' + error.message);
+    const handleCreatePlaylist = async () => {
+        const newPlaylist = await createPlaylist(newPlaylistName);
+        if (newPlaylist) {
+            setPlaylists([...playlists, newPlaylist]);
+            setNewPlaylistName("");
         }
     };
-
 
     return (
         <div>
@@ -85,7 +81,7 @@ const PlaylistManager = () => {
                 onChange={(e) => setNewPlaylistName(e.target.value)}
                 placeholder="New Playlist Name"
             />
-            <button onClick={createPlaylist}>Create Playlist</button>
+            <button onClick={handleCreatePlaylist}>Create Playlist</button>
 
             <h2>Your Playlists</h2>
             <ul>
