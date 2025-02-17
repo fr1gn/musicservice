@@ -11,7 +11,8 @@ export const PlayerProvider = ({ children }) => {
     const [player, setPlayer] = useState(null);
     const [deviceId, setDeviceId] = useState(null);
     const [volume, setVolume] = useState(0.8);
-    const token = "BQAnPNPak55GAmOU2l708iOwLRj6jfQ2vKsb6zdqSGjKirw1RZzgv-R34SkmLDv3uCKNQaftaJIUH1GKB-3W12gtBwziXg_1YtW0IWdEFn50_rrAI8FwdgZs308Jw9x5soGM1VtgQa3shKn9thzsgTlRW9J0CFDmMw-ZaWgW3PgaBDni8CynqauenwgD-cvNAwMo-w2hGV_1Jf1ZerLJI-dv7Hf6_2xYNAoX7IPJOKzRvTRffUlDwXpw-Ui07Nei"
+    const token = "BQBnpGjVaP2Zj_MvWQ4z38NgR_XFV-41J2p0VQubMzeFzcQpqymfIM1Q7Rohh5hgw1Eh2VHPtD6YzaFEf1Vom7dn14U6iQgxXfpEqj4yW2K-YKjp5tE_g6LIUYlMwuydmqTbVV7bAQYZwwdqaUX20wazWBq5kKulf8zSD8Ohuy-1aCdGUc1OKh7PQGZFJMvc_aBG8QnoYg1r6YAoMPXSZktjBkS45gD-bJ9DAdn2PG8qnYnT_Tr_yYNYt0__zwz2"
+
     const playTrack = async (track, list = []) => {
         if (!player || !deviceId) return;
 
@@ -49,8 +50,26 @@ export const PlayerProvider = ({ children }) => {
         }
     };
 
+    // ✅ Function to clear player when logging out
+    const clearPlayer = () => {
+        console.log("🛑 Clearing player...");
+        if (player) {
+            player.pause();
+            player.disconnect();
+        }
+        setPlayer(null);
+        setCurrentTrack(null);
+        setTrackList([]);
+        setIsPlaying(false);
+        setDeviceId(null);
+    };
+
     return (
-        <PlayerContext.Provider value={{ currentTrack, trackList, isPlaying, playTrack, pauseTrack, player, setPlayer, deviceId, setDeviceId, volume, setVolume, token }}>
+        <PlayerContext.Provider value={{
+            currentTrack, trackList, isPlaying, playTrack, pauseTrack,
+            player, setPlayer, deviceId, setDeviceId, volume, setVolume, token,
+            clearPlayer // ✅ Exposing clearPlayer
+        }}>
             {children}
         </PlayerContext.Provider>
     );

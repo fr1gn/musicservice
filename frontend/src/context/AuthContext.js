@@ -8,7 +8,7 @@ export const AuthProvider = ({ children }) => {
     useEffect(() => {
         const storedUser = JSON.parse(localStorage.getItem("user"));
         if (storedUser) {
-            setUser(storedUser); // ✅ Correct usage here
+            setUser(storedUser);
         }
     }, []);
 
@@ -23,11 +23,10 @@ export const AuthProvider = ({ children }) => {
     };
 
     return (
-        <AuthContext.Provider value={{ user, setUser, login, logout }}> {/* ✅ Add setUser here */}
+        <AuthContext.Provider value={{ user, setUser, login, logout }}>
             {children}
         </AuthContext.Provider>
     );
 };
-
 
 export const useAuthContext = () => useContext(AuthContext);

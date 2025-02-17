@@ -1,8 +1,11 @@
 import { useAuthContext } from "../context/AuthContext";
+import { usePlayer } from "../context/PlayerContext";
 import { useEffect, useState } from "react";
 
 const useAuth = () => {
     const { user, setUser } = useAuthContext();
+    const { clearPlayer } = usePlayer(); // ✅ Import clearPlayer function
+
     const [isAuthenticated, setIsAuthenticated] = useState(!!user || !!localStorage.getItem("user"));
 
     useEffect(() => {
@@ -14,7 +17,7 @@ const useAuth = () => {
     }, [setUser]);
 
     const login = (userData) => {
-        console.log("🔹 Saving user data:", userData); // ✅ Лог для проверки
+        console.log("🔹 Saving user data:", userData);
 
         if (!userData.id) {
             console.error("❌ Login response is missing user ID!", userData);
@@ -27,13 +30,13 @@ const useAuth = () => {
         window.dispatchEvent(new Event("storage"));
     };
 
-
-
     const logout = () => {
-        setUser(null);  // ✅ Resets state
+        console.log("🚀 Logging out...");
+        clearPlayer(); // ✅ Stop playback, clear player
+        setUser(null);
         localStorage.removeItem("user");
         setIsAuthenticated(false);
-        window.dispatchEvent(new Event("storage")); // ✅ Triggers navbar update
+        window.dispatchEvent(new Event("storage"));
     };
 
     return { user, isAuthenticated, login, logout };
