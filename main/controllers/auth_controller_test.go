@@ -1,7 +1,6 @@
-package tests
+package controllers
 
 import (
-	"musicservice/main/controllers"
 	"net/http"
 	"net/http/httptest"
 	"strings"
@@ -13,7 +12,7 @@ func TestRegister(t *testing.T) {
 	req := httptest.NewRequest("POST", "/api/register", strings.NewReader(payload))
 	w := httptest.NewRecorder()
 
-	controllers.Register(w, req)
+	Register(w, req)
 	if w.Code != http.StatusOK {
 		t.Errorf("Expected status 200, got %d", w.Code)
 	}
@@ -24,7 +23,7 @@ func TestLogin(t *testing.T) {
 	req := httptest.NewRequest("POST", "/api/login", strings.NewReader(payload))
 	w := httptest.NewRecorder()
 
-	controllers.Login(w, req)
+	Login(w, req)
 	if w.Code != http.StatusOK {
 		t.Errorf("Expected status 200, got %d", w.Code)
 	}

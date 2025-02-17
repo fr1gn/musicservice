@@ -1,14 +1,13 @@
-package tests
+package middleware
 
 import (
-	"musicservice/main/middleware"
 	"net/http"
 	"net/http/httptest"
 	"testing"
 )
 
 func TestAuthMiddleware(t *testing.T) {
-	handler := middleware.AuthMiddleware(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+	handler := AuthMiddleware(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
 	}))
 
