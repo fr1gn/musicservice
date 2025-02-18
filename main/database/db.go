@@ -10,7 +10,7 @@ var DB *sqlx.DB
 
 func Connect() {
 	var err error
-	connStr := "user=postgres password=1234 dbname=gofy_music sslmode=disable"
+	connStr := "user=postgres password=0000 dbname=gofy_music sslmode=disable"
 
 	// Connect to PostgreSQL
 	DB, err = sqlx.Connect("postgres", connStr)

@@ -87,21 +87,41 @@ func AddSongToPlaylist(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(map[string]string{"message": "Song added successfully"})
 }
 
+// GetPlaylistSongs возвращает все песни в указанном плейлисте
 func GetPlaylistSongs(w http.ResponseWriter, r *http.Request) {
+	// Получаем playlist_id из query-параметров
 	playlistID := r.URL.Query().Get("playlist_id")
+
+	// Проверяем, что playlist_id был передан
 	if playlistID == "" {
-		http.Error(w, "Playlist ID is required", http.StatusBadRequest)
+		http.Error(w, `{"error": "playlist_id is required"}`, http.StatusBadRequest)
 		return
 	}
 
+	// Получаем песни из базы данных по playlist_id
 	var songs []models.Song
-	err := database.DB.Select(&songs, "SELECT songs.* FROM playlist_songs JOIN songs ON playlist_songs.song_id = songs.id WHERE playlist_songs.playlist_id = $1", playlistID)
+	query := `
+        SELECT s.id, s.spotify_id, s.title, s.artist
+        FROM songs s
+        JOIN playlist_songs ps ON s.id = ps.song_id
+        WHERE ps.playlist_id = $1
+    `
+
+	// Выполняем запрос
+	err := database.DB.Select(&songs, query, playlistID)
 	if err != nil {
-		http.Error(w, "Failed to fetch songs: "+err.Error(), http.StatusInternalServerError)
+		// Если произошла ошибка, возвращаем сообщение об ошибке
+		http.Error(w, `{"error": "Failed to fetch songs: `+err.Error()+`"}`, http.StatusInternalServerError)
 		return
 	}
 
-	json.NewEncoder(w).Encode(songs)
+	// Устанавливаем заголовок Content-Type для JSON
+	w.Header().Set("Content-Type", "application/json")
+
+	// Кодируем и отправляем список песен в ответе
+	if err := json.NewEncoder(w).Encode(songs); err != nil {
+		http.Error(w, `{"error": "Failed to encode response: `+err.Error()+`"}`, http.StatusInternalServerError)
+	}
 }
 
 func GetRecentlyPlayed(w http.ResponseWriter, r *http.Request) {
