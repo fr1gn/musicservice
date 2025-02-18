@@ -11,7 +11,7 @@ export const PlayerProvider = ({ children }) => {
     const [player, setPlayer] = useState(null);
     const [deviceId, setDeviceId] = useState(null);
     const [volume, setVolume] = useState(0.8);
-    const token = "BQBeO0NfzX9i_GDqHhTz3Q2hPlJpzyiV9jgtv6rfi6OJDcFfxKOyHR47bqdI0NnYL3YAP2MVMiJ6V239v3wWcZpIlSq3SpC0TEsFd1Cz7tzWbLkorU7Ipk41MOrvdRKsob_SKOyjHc8W8SxJPjw_g00hiNbM9U_KXMPx7n6i3ANurmnQT1kcP3iN4iUvoGp_t07KSm0xjTg9HskOGy4ez_g1M7UI-2GHGOeO9pMgBxkrV7jRFAHGPPEJU36Ors4VJ0FnVrWnk2H0BcU_bDoVumSdGPVKfjMoCkIjqANlkjM2VcFSfrV8RLZLIlOXpeZ6h8gMADUZYJ2cNG7D64C05EYB9Yci4k9tFpS0D9310-R5z_bXcwM3Tb3Ow3g"
+    const token = "BQCUrbyX4YtWL5lG8S1Sx_lS3ng6pdvrKDDNVU8Q7yTrWG0Po6SfWSsjjBBs26WLMOLstQ5ZU0XxVrI9dR52w2SVWW_bzZxOH-JSkfjrwM_na4VTKdL700ior7Y1uIjjWjm1ivVW6MRVw2mOa5kU1EohVcFr6yVaauZocfVqSnYiulJsquy4RVOeXdqzGdctv32PMgAZXTG09FnLYXAUp8jzb9kaySG1icxBxkv9Qsfv3lKwcD6ASPS0jUu45lar"
     const playTrack = async (track, list = []) => {
         if (!player || !deviceId) {
             console.warn("🚫 Player or Device ID is missing!");

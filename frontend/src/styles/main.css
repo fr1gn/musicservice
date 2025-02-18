@@ -322,6 +322,35 @@ label {
   cursor: pointer;
 }
 
+.albums-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  justify-content: center;
+}
+
+.album-card {
+  text-align: center;
+  cursor: pointer;
+}
+
+.album-image {
+  width: 150px; /* Фиксированный размер */
+  height: 150px; /* Фиксированный размер */
+  object-fit: cover;
+  border-radius: 10px;
+}
+
+.album-title {
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.album-artist {
+  font-size: 14px;
+  color: gray;
+}
+
 
 
 /* ===== FOOTER ===== */

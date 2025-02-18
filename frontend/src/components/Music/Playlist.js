@@ -1,34 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import useAuth from "../../hooks/useAuth";
+import { createPlaylist, addSongToPlaylist } from "../../api/api";
 import "../../styles/main.css";
-
-export const createPlaylist = async (playlistName, storedUser) => {
-    const user = storedUser || JSON.parse(localStorage.getItem("user")) || {};
-    console.log("🔹 Current user in Playlist.js:", user);
-
-    if (!user || !user.id) {
-        console.error("❌ Error: User ID is missing, cannot create playlist.", user);
-        return;
-    }
-
-    try {
-        const response = await fetch("http://localhost:8080/api/playlist/create", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({ name: playlistName, user_id: user.id }),
-        });
-
-        const data = await response.json();
-        if (!response.ok) throw new Error(data.error || "Failed to create playlist");
-
-        console.log("✅ Playlist created successfully:", data);
-        return data;
-    } catch (error) {
-        console.error("❌ Error creating playlist:", error);
-    }
-};
 
 const PlaylistManager = () => {
     const { user } = useAuth();
@@ -56,7 +29,7 @@ const PlaylistManager = () => {
     const fetchPlaylists = async () => {
         if (!user || !user.id) {
             console.warn("User is not logged in.");
-            setPlaylists([]); // ✅ Гарантируем, что playlists всегда массив
+            setPlaylists([]);
             return;
         }
 
@@ -70,16 +43,18 @@ const PlaylistManager = () => {
 
             const data = await response.json();
             console.log("✅ Loaded playlists:", data);
-
-            setPlaylists(Array.isArray(data) ? data : []); // ✅ Убеждаемся, что это массив
+            setPlaylists(Array.isArray(data) ? data : []);
         } catch (error) {
             console.error("❌ Error loading playlists:", error);
-            setPlaylists([]); // ✅ Предотвращаем null
+            setPlaylists([]);
         }
     };
 
     const handleCreatePlaylist = async () => {
-        const newPlaylist = await createPlaylist(newPlaylistName, storedUser);
+        if (!newPlaylistName) return;
+        console.log("📂 Creating playlist:", newPlaylistName);
+        const newPlaylist = await createPlaylist(user.token, newPlaylistName);
+
         if (newPlaylist) {
             fetchPlaylists();
             setNewPlaylistName("");
@@ -154,48 +129,34 @@ const PlaylistManager = () => {
 
             <h2>Your Playlists</h2>
             <ul>
-                {Array.isArray(playlists) && playlists.length > 0 ? (
-                    playlists.map((playlist) => (
-                        <li key={playlist.id} className="playlist-item">
-                            {editingPlaylist && editingPlaylist.id === playlist.id ? (
+                {playlists.length > 0 ? playlists.map((playlist) => (
+                    <li key={playlist.id} className="playlist-item">
+                        <span>🎵 {playlist.name}</span>
+                        <button onClick={() => setEditingPlaylist(playlist)}>✏️ Edit</button>
+                        <button onClick={() => handleDeletePlaylist(playlist.id)}>🗑 Delete</button>
+                        <button onClick={() => handleSelectPlaylist(playlist)}>📂 View Songs</button>
+                        {editingPlaylist && editingPlaylist.id === playlist.id && (
+                            <>
                                 <input
                                     type="text"
                                     value={updatedName}
                                     onChange={(e) => setUpdatedName(e.target.value)}
                                     placeholder="Edit Playlist Name"
                                 />
-                            ) : (
-                                <>
-                                    <i>🎵</i> {playlist.name}
-                                </>
-                            )}
-                            <button onClick={() => setEditingPlaylist(playlist)}>✏️ Edit</button>
-                            <button onClick={() => handleDeletePlaylist(playlist.id)}>🗑 Delete</button>
-                            <button onClick={() => handleSelectPlaylist(playlist)}>📂 View Songs</button>
-                            {editingPlaylist && editingPlaylist.id === playlist.id && (
                                 <button onClick={handleEditPlaylist}>✔ Save</button>
-                            )}
-                        </li>
-                    ))
-                ) : (
-                    <p>No playlists found. Create one!</p>
-                )}
+                            </>
+                        )}
+                    </li>
+                )) : <p>No playlists found. Create one!</p>}
             </ul>
 
             {selectedPlaylist && (
                 <div className="playlist-songs">
                     <h2>Songs in "{selectedPlaylist.name}"</h2>
                     <ul>
-                        {Array.isArray(songs) && songs.length > 0 ? (
-                            songs.map((song) => (
-                                <li key={song.id}>
-                                    {song.title} - {song.artist}
-                                    <button className="play-song-button">▶️ Play</button>
-                                </li>
-                            ))
-                        ) : (
-                            <p>No songs in this playlist.</p>
-                        )}
+                        {songs.length > 0 ? songs.map((song) => (
+                            <li key={song.id}>{song.title} - {song.artist}</li>
+                        )) : <p>No songs in this playlist.</p>}
                     </ul>
                 </div>
             )}

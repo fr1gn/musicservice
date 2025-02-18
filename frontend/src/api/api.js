@@ -1,12 +1,13 @@
+import { usePlayer } from "../context/PlayerContext";
+
 const API_URL = process.env.REACT_APP_API_URL || "http://localhost:8080/api";
 const API_URLd = "https://api.spotify.com/v1";
-const TOKEN = "BQBeO0NfzX9i_GDqHhTz3Q2hPlJpzyiV9jgtv6rfi6OJDcFfxKOyHR47bqdI0NnYL3YAP2MVMiJ6V239v3wWcZpIlSq3SpC0TEsFd1Cz7tzWbLkorU7Ipk41MOrvdRKsob_SKOyjHc8W8SxJPjw_g00hiNbM9U_KXMPx7n6i3ANurmnQT1kcP3iN4iUvoGp_t07KSm0xjTg9HskOGy4ez_g1M7UI-2GHGOeO9pMgBxkrV7jRFAHGPPEJU36Ors4VJ0FnVrWnk2H0BcU_bDoVumSdGPVKfjMoCkIjqANlkjM2VcFSfrV8RLZLIlOXpeZ6h8gMADUZYJ2cNG7D64C05EYB9Yci4k9tFpS0D9310-R5z_bXcwM3Tb3Ow3g"
 
-
-export const fetchAlbums = async (query) => {
+// ✅ fetchAlbums теперь принимает token как аргумент
+export const fetchAlbums = async (token, query) => {
     try {
         const response = await fetch(`${API_URLd}/search?q=${query}&type=album`, {
-            headers: { Authorization: `Bearer ${TOKEN}` },
+            headers: { Authorization: `Bearer ${token}` },
         });
         const data = await response.json();
         return data.albums.items; // Returns an array of albums
@@ -16,19 +17,21 @@ export const fetchAlbums = async (query) => {
     }
 };
 
-export const fetchAlbumDetails = async (albumId) => {
+// ✅ fetchAlbumDetails принимает token как аргумент
+export const fetchAlbumDetails = async (token, albumId) => {
     try {
-
         const response = await fetch(`${API_URLd}/albums/${albumId}`, {
-            headers: { Authorization: `Bearer ${TOKEN}` },
+            headers: { Authorization: `Bearer ${token}` },
         });
-        const data = await response.json();
-        return data;
+        return await response.json();
     } catch (error) {
         console.error("Error fetching album details:", error);
         return null;
     }
 };
+
+// ✅ Внутри компонентов используем usePlayer() и передаем token в API-функции
+
 
 
 // ✅ Register API
@@ -54,22 +57,6 @@ export const login = (email, password) =>
         console.log("API Response:", data); // ✅ Debug log
         return data;
     });
-
-// ✅ Get Album by ID
-export const getAlbum = (id) =>
-    fetch(`${API_URL}/album?id=${id}`).then((res) => res.json());
-
-// ✅ Search Songs API
-export const searchSongs = async (query) => {
-    try {
-        const response = await fetch(`${API_URL}/search?q=${query}`);
-        if (!response.ok) throw new Error("Failed to fetch songs");
-        return await response.json();
-    } catch (error) {
-        console.error("Error searching songs:", error);
-        throw error;
-    }
-};
 
 /// ✅ Fetch Recently Played Songs
 export const fetchRecentlyPlayed = async (userId) => {
@@ -112,22 +99,46 @@ export const createPlaylist = async (token, playlistName) => {
 };
 
 // ✅ Add Song to Playlist (Protected)
-export const addSongToPlaylist = async (token, playlistId, songId) => {
+export const addSongToPlaylist = async (token, playlistId, song) => {
     try {
-        const response = await fetch(`${API_URL}/playlist/add-song`, {
+        // ✅ Проверяем, существует ли песня в `songs`
+        const checkResponse = await fetch(`http://localhost:8080/api/song?id=${song.id}`);
+        if (!checkResponse.ok) {
+            // ✅ Если песни нет, добавляем её
+            console.log("📥 Song not found, adding to DB:", song);
+            await fetch("http://localhost:8080/api/songs/add", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`,
+                },
+                body: JSON.stringify(song),
+            });
+        }
+
+        // ✅ Теперь добавляем песню в плейлист
+        const response = await fetch("http://localhost:8080/api/playlist/add-song", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
                 Authorization: `Bearer ${token}`,
             },
-            body: JSON.stringify({ playlistId, songId }),
+            body: JSON.stringify({ playlist_id: playlistId, song_id: song.id }),
         });
-        return await response.json();
+
+        if (!response.ok) {
+            const errorText = await response.text();
+            console.error("❌ Server Response:", errorText);
+            throw new Error(`Failed to add song to playlist: ${errorText}`);
+        }
+
+        console.log("✅ Song added to playlist successfully!");
     } catch (error) {
-        console.error("Error adding song to playlist:", error);
-        throw error;
+        console.error("❌ Error adding song to playlist:", error);
     }
 };
+
+
 
 export const changePassword = async (email, oldPassword, newPassword) => {
     try {
