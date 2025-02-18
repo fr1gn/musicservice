@@ -1,6 +1,7 @@
 const API_URL = process.env.REACT_APP_API_URL || "http://localhost:8080/api";
 const API_URLd = "https://api.spotify.com/v1";
-const TOKEN = "BQCjfyo6n6Oa65X2waQO5qp9SuhbxpmiXyCybS-bC1SPSmjzmmwcj8pgaRUGQdCVTCD0E89rumuYjmC3GBMHbf4hvSzBYFtf_DoqoZiGSzdk0cZR-nEvYOMaIifnkdPDK8JllGDNNzNDOU0nSlCObyp7AWL8Dt95ufER07ZsWxZASuY_XEu3ke3RKa_cPvccHgJ2LaKbHcNqIhMWbc5wOCxE39VAzgmX8KQWvJlLYJqvI_0wh97tFPl8WJtfWess"
+const TOKEN = "BQBeO0NfzX9i_GDqHhTz3Q2hPlJpzyiV9jgtv6rfi6OJDcFfxKOyHR47bqdI0NnYL3YAP2MVMiJ6V239v3wWcZpIlSq3SpC0TEsFd1Cz7tzWbLkorU7Ipk41MOrvdRKsob_SKOyjHc8W8SxJPjw_g00hiNbM9U_KXMPx7n6i3ANurmnQT1kcP3iN4iUvoGp_t07KSm0xjTg9HskOGy4ez_g1M7UI-2GHGOeO9pMgBxkrV7jRFAHGPPEJU36Ors4VJ0FnVrWnk2H0BcU_bDoVumSdGPVKfjMoCkIjqANlkjM2VcFSfrV8RLZLIlOXpeZ6h8gMADUZYJ2cNG7D64C05EYB9Yci4k9tFpS0D9310-R5z_bXcwM3Tb3Ow3g"
+
 
 export const fetchAlbums = async (query) => {
     try {
@@ -17,6 +18,7 @@ export const fetchAlbums = async (query) => {
 
 export const fetchAlbumDetails = async (albumId) => {
     try {
+
         const response = await fetch(`${API_URLd}/albums/${albumId}`, {
             headers: { Authorization: `Bearer ${TOKEN}` },
         });

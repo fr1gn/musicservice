@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
-import { fetchAlbums, fetchAlbumDetails } from "../../api/api"; // ✅ Используем fetchAlbums вместо fetchFixedAlbums// ✅ Импорт API-функций
+import { fetchAlbums, fetchAlbumDetails } from "../../api/api"; // ✅ Импорт API-функций
 import "../../styles/main.css";
 
 export default function Albums() {
     const [albums, setAlbums] = useState([]);
     const [selectedAlbum, setSelectedAlbum] = useState(null);
+    const [searchQuery, setSearchQuery] = useState("");
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
 
@@ -12,7 +13,7 @@ export default function Albums() {
         const loadAlbums = async () => {
             setLoading(true);
             try {
-                const data = await fetchAlbums("pop"); // ✅ Загружаем предустановленные альбомы
+                const data = await fetchAlbums("pop"); // ✅ Загружаем популярные альбомы по умолчанию
                 setAlbums(data);
             } catch (err) {
                 setError("Failed to load albums");
@@ -35,9 +36,33 @@ export default function Albums() {
         }
     };
 
+    const handleSearch = async () => {
+        if (!searchQuery) return;
+        setLoading(true);
+        try {
+            const data = await fetchAlbums(searchQuery);
+            setAlbums(data);
+        } catch (err) {
+            setError("Failed to search albums");
+        } finally {
+            setLoading(false);
+        }
+    };
+
     return (
         <div className="albums-container">
             <h2>🎵 Albums</h2>
+
+            <div className="search-bar">
+                <input
+                    type="text"
+                    placeholder="Search for an album..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                />
+                <button onClick={handleSearch}>Search</button>
+            </div>
+
             {loading && <p>Loading albums...</p>}
             {error && <p className="error">{error}</p>}
 
