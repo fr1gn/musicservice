@@ -9,6 +9,7 @@ import Profile from "./pages/Profile";
 import Playlist from "./components/Music/Playlist";
 import Search from "./components/Music/Search";
 import Player from "./components/Music/Player";
+import Album from "./components/Music/Album"
 import { AuthProvider } from "./context/AuthContext";
 import { PlayerProvider } from "./context/PlayerContext";
 import useAuth from "./hooks/useAuth";
@@ -35,6 +36,7 @@ function App() {
                             <Route path="/profile" element={<ProtectedRoute element={<Profile />} />} />
                             <Route path="/playlist" element={<ProtectedRoute element={<Playlist />} />} />
                             <Route path="/search" element={<ProtectedRoute element={<Search />} />} />
+                            <Route path="/album" element={<ProtectedRoute element={<Album />} />} />
                         </Routes>
                     </main>
                     <Player /> {/* ✅ Global player */}
