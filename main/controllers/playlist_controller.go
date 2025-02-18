@@ -46,14 +46,38 @@ func DeletePlaylist(w http.ResponseWriter, r *http.Request) {
 func AddSongToPlaylist(w http.ResponseWriter, r *http.Request) {
 	var data struct {
 		PlaylistID int    `json:"playlist_id"`
-		SongID     string `json:"song_id"` // ✅ Теперь строка
+		SongID     string `json:"song_id"` // ID трека из Spotify
+		Title      string `json:"title"`   // Название трека
+		Artist     string `json:"artist"`  // Исполнитель
 	}
+
 	if err := json.NewDecoder(r.Body).Decode(&data); err != nil {
 		http.Error(w, "Invalid request data", http.StatusBadRequest)
 		return
 	}
 
-	_, err := database.DB.Exec("INSERT INTO playlist_songs (playlist_id, song_id) VALUES ($1, $2)", data.PlaylistID, data.SongID)
+	// Проверка существования трека в таблице songs
+	var localSongID int
+	err := database.DB.Get(&localSongID, "SELECT id FROM songs WHERE spotify_id = $1", data.SongID)
+
+	if err != nil {
+		// Если трек не найден, добавляем его в таблицу songs
+		_, err = database.DB.Exec("INSERT INTO songs (spotify_id, title, artist) VALUES ($1, $2, $3)", data.SongID, data.Title, data.Artist)
+		if err != nil {
+			http.Error(w, "Failed to add song to database: "+err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		// Получаем локальный ID только что добавленного трека
+		err = database.DB.Get(&localSongID, "SELECT id FROM songs WHERE spotify_id = $1", data.SongID)
+		if err != nil {
+			http.Error(w, "Failed to retrieve local song ID: "+err.Error(), http.StatusInternalServerError)
+			return
+		}
+	}
+
+	// Теперь добавляем трек в плейлист
+	_, err = database.DB.Exec("INSERT INTO playlist_songs (playlist_id, song_id) VALUES ($1, $2)", data.PlaylistID, localSongID)
 	if err != nil {
 		http.Error(w, "Failed to add song to playlist: "+err.Error(), http.StatusInternalServerError)
 		return
