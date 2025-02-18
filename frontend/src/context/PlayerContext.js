@@ -13,7 +13,15 @@ export const PlayerProvider = ({ children }) => {
     const [volume, setVolume] = useState(0.8);
 const token = "BQCjfyo6n6Oa65X2waQO5qp9SuhbxpmiXyCybS-bC1SPSmjzmmwcj8pgaRUGQdCVTCD0E89rumuYjmC3GBMHbf4hvSzBYFtf_DoqoZiGSzdk0cZR-nEvYOMaIifnkdPDK8JllGDNNzNDOU0nSlCObyp7AWL8Dt95ufER07ZsWxZASuY_XEu3ke3RKa_cPvccHgJ2LaKbHcNqIhMWbc5wOCxE39VAzgmX8KQWvJlLYJqvI_0wh97tFPl8WJtfWess"
     const playTrack = async (track, list = []) => {
-        if (!player || !deviceId) return;
+        if (!player || !deviceId) {
+            console.warn("🚫 Player or Device ID is missing!");
+            return;
+        }
+
+        if (!track) {
+            console.warn("🚫 Track is undefined!");
+            return;
+        }
 
         try {
             await fetch(`https://api.spotify.com/v1/me/player/play?device_id=${deviceId}`, {
@@ -24,13 +32,22 @@ const token = "BQCjfyo6n6Oa65X2waQO5qp9SuhbxpmiXyCybS-bC1SPSmjzmmwcj8pgaRUGQdCVT
                     Authorization: `Bearer ${token}`,
                 },
             });
+
             setCurrentTrack(track);
-            setTrackList(list);
+
+            // Ensure trackList is set
+            if (list.length > 0) {
+                setTrackList(list);
+            } else if (!trackList.includes(track)) {
+                setTrackList([...trackList, track]);
+            }
+
             setIsPlaying(true);
         } catch (error) {
             console.error("Error playing track:", error);
         }
     };
+
 
     const pauseTrack = async () => {
         if (!player || !deviceId) return;

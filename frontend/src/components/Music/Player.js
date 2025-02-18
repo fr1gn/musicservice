@@ -63,6 +63,25 @@ export default function Player() {
         return () => clearInterval(interval);
     }, [isPlaying, player]);
 
+    useEffect(() => {
+        if (!player) return;
+
+        player.addListener("player_state_changed", (state) => {
+            if (!state) return;
+
+            setProgress(state.position);
+            setDuration(state.duration);
+            setIsPaused(state.paused);
+
+            // ✅ If track is finished, trigger handleTrackEnd()
+            if (!state.paused && state.position >= state.duration - 1000) {
+                console.log("🎵 Track ended. Moving to next...");
+                handleTrackEnd();
+            }
+        });
+    }, [player, currentTrack]);
+
+
     // ✅ Handles play/pause functionality correctly
     const handlePlayPause = async () => {
         if (!currentTrack) return;
@@ -84,31 +103,53 @@ export default function Player() {
 
     const handleTrackEnd = () => {
         if (repeat) {
-            playTrack(currentTrack, trackList); // 🔁 Repeat same track
+            playTrack(currentTrack, trackList);
         } else {
-            handleNext(); // ⏭ Move to next track
+            handleNext();
         }
     };
 
+
     const handleNext = () => {
-        if (!trackList.length) return;
+        if (!trackList.length || !currentTrack) {
+            console.warn("⏭️ No track available for next.");
+            return;
+        }
 
         const currentIndex = trackList.findIndex(track => track.id === currentTrack.id);
+        if (currentIndex === -1) {
+            console.warn("❌ Current track not found in trackList. Resetting to first track.");
+            playTrack(trackList[0], trackList);
+            return;
+        }
+
         const nextIndex = shuffle
             ? Math.floor(Math.random() * trackList.length)
             : (currentIndex + 1) % trackList.length;
 
+        console.log(`⏭️ Playing next track: ${trackList[nextIndex]?.name}`);
         playTrack(trackList[nextIndex], trackList);
-        setIsPaused(false); // ✅ Ensure play/pause button updates
+        setIsPaused(false);
     };
 
     const handlePrevious = () => {
-        if (!trackList.length) return;
+        if (!trackList.length || !currentTrack) {
+            console.warn("⏮️ No track available for previous.");
+            return;
+        }
 
         const currentIndex = trackList.findIndex(track => track.id === currentTrack.id);
+        if (currentIndex === -1) {
+            console.warn("❌ Current track not found in trackList. Resetting to first track.");
+            playTrack(trackList[0], trackList);
+            return;
+        }
+
         const prevIndex = (currentIndex - 1 + trackList.length) % trackList.length;
+
+        console.log(`⏮️ Playing previous track: ${trackList[prevIndex]?.name}`);
         playTrack(trackList[prevIndex], trackList);
-        setIsPaused(false); // ✅ Ensure play/pause button updates
+        setIsPaused(false);
     };
 
     const handleSeek = async (e) => {
