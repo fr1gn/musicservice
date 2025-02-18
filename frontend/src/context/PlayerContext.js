@@ -11,8 +11,7 @@ export const PlayerProvider = ({ children }) => {
     const [player, setPlayer] = useState(null);
     const [deviceId, setDeviceId] = useState(null);
     const [volume, setVolume] = useState(0.8);
-    const token = "BQDRPBfryrdu0OmSE2XMO_m5leS-fT1e6vz3kl4TxEBTXGQhnCbXjZebOT8_x-4c8lTHrObA7oa_xlzQa8Dwxrq4MSnvFzna51rSnfiPlP2KlVJu2tcsl4BsLCT6ESz5wMJIVGVcNfjQHz8Q3biHSR8AXsAkI3rpKweQR-Sq2yzT8OHQeaEnJfU-mp0EDPfXigIGLosKuEqcJFaZzmYII5piFu4jWF4yY3b7Xxti9KJaJ91Lf1V725Mp9RPIZ4iT"
-
+const token = "BQCjfyo6n6Oa65X2waQO5qp9SuhbxpmiXyCybS-bC1SPSmjzmmwcj8pgaRUGQdCVTCD0E89rumuYjmC3GBMHbf4hvSzBYFtf_DoqoZiGSzdk0cZR-nEvYOMaIifnkdPDK8JllGDNNzNDOU0nSlCObyp7AWL8Dt95ufER07ZsWxZASuY_XEu3ke3RKa_cPvccHgJ2LaKbHcNqIhMWbc5wOCxE39VAzgmX8KQWvJlLYJqvI_0wh97tFPl8WJtfWess"
     const playTrack = async (track, list = []) => {
         if (!player || !deviceId) return;
 
