@@ -11,8 +11,7 @@ export const PlayerProvider = ({ children }) => {
     const [player, setPlayer] = useState(null);
     const [deviceId, setDeviceId] = useState(null);
     const [volume, setVolume] = useState(0.8);
-    const token = "BQAlreyjmHBD74dk_m3vd_dECOtDSs0QfJgiL2UsViR-_TLDCAS9e8P-xHkHJjmxN_kmNXKo5vaf2pBErS_hNcDkxwAtugYvBLv394lWoWVB9NUDNNlNG8YkRZXcp8DEyZRok4i0dkuHsg5QNsSrQSnGFr5CUcs1_0fAAymEJJnzWO89Wwv3-bhQY3kMreAbsTDUgmzlXrZgG9xdjRjDDcxFXwxAvNCPRSpz120r6Qdu9D3q_6hxwrbhJARtUvG7"
-
+    const token = "BQDSQLM855l68HuBj1JBFzcait67vHFV-9V71as6jiYGVySOXZyL-HJXo-H-T7p69Z7cy7FTmHivClw_xNTFantRH3zv0LlQPxb8JH23TGiuGKFVK0QbBwxoAgWJTSWa951vizd7txw7VxyAVn1HZQ6M4fjWUkEu_wro4b4WXNLPM5e6TL25mHniLtGsBhc_y01PYSaqtmA_ykaSReGjlOGULugDTQA6I9Vi_iuaOOwIOUxPlfn0piLkBP8DHO_0"
     const playTrack = async (track, list = []) => {
         if (!player || !deviceId) {
             console.warn("🚫 Player or Device ID is missing!");
