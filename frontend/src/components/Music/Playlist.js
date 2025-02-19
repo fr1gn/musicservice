@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import useAuth from "../../hooks/useAuth";
-import { createPlaylist, addSongToPlaylist } from "../../api/api";
+import { createPlaylist } from "../../api/api";
 import "../../styles/main.css";
 
 const PlaylistManager = () => {
     const { user } = useAuth();
-    const [storedUser, setStoredUser] = useState(user || JSON.parse(localStorage.getItem("user")));
+    const [storedUser , setStoredUser ] = useState(user || JSON.parse(localStorage.getItem("user")));
     const [playlists, setPlaylists] = useState([]);
     const [newPlaylistName, setNewPlaylistName] = useState('');
     const [editingPlaylist, setEditingPlaylist] = useState(null);
@@ -14,21 +14,21 @@ const PlaylistManager = () => {
     const [songs, setSongs] = useState([]);
 
     useEffect(() => {
-        const localUser = JSON.parse(localStorage.getItem("user"));
-        if (!storedUser && localUser) {
-            console.warn("⚠️ User is not loaded from context, updating...", localUser);
-            setStoredUser(localUser);
+        const localUser  = JSON.parse(localStorage.getItem("user"));
+        if (!storedUser  && localUser ) {
+            console.warn("⚠️ User is not loaded from context, updating...", localUser );
+            setStoredUser (localUser );
         }
         fetchPlaylists();
     }, [user]);
 
-    if (!storedUser) {
+    if (!storedUser ) {
         return <p>Please log in to view your playlists.</p>;
     }
 
     const fetchPlaylists = async () => {
         if (!user || !user.id) {
-            console.warn("User is not logged in.");
+            console.warn("User  is not logged in.");
             setPlaylists([]);
             return;
         }
@@ -65,7 +65,7 @@ const PlaylistManager = () => {
         try {
             const response = await fetch(`http://localhost:8080/api/playlist/delete?id=${playlistId}`, {
                 method: "DELETE",
-                headers: { 'Authorization': `Bearer ${storedUser.token}` }
+                headers: { 'Authorization': `Bearer ${storedUser .token}` }
             });
 
             if (!response.ok) {
@@ -85,7 +85,7 @@ const PlaylistManager = () => {
                 method: "PUT",
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${storedUser.token}`
+                    'Authorization': `Bearer ${storedUser .token}`
                 },
                 body: JSON.stringify({ name: updatedName })
             });
@@ -101,6 +101,9 @@ const PlaylistManager = () => {
     const fetchPlaylistSongs = async (playlistId) => {
         try {
             const response = await fetch(`http://localhost:8080/api/playlist/songs?playlist_id=${playlistId}`);
+            if (!response.ok) {
+                throw new Error('Failed to fetch songs');
+            }
             const data = await response.json();
             console.log(`📥 Songs fetched for playlist ${playlistId}:`, data);
             setSongs(Array.isArray(data) ? data : []);

@@ -1,0 +1,2 @@
+Service aims to capitalize on this trend by offering a music platform tailored to local preferences and global quality standards.
+Gofy will empower music enthusiasts to discover new local talent, create personalized playlists, and enjoy ofline playback, fostering deeper engagement with music both online and offline 

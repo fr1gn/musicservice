@@ -1,0 +1,99 @@
+package services
+
+import (
+	"encoding/json"
+	"fmt"
+	"io/ioutil"
+	"net/http"
+	"net/url"
+	"strings"
+)
+
+const (
+	SpotifyTokenURL = "https://accounts.spotify.com/api/token"
+	SpotifyAPIBase  = "https://api.spotify.com/v1"
+	ClientID        = "b6733ef8e26b4bb793c538372c915dfd"
+	ClientSecret    = "04051215529846b4a4fffda9e472950f"
+)
+
+var spotifyAccessToken string
+
+// Get Spotify Access Token
+func getSpotifyAccessToken() error {
+	data := url.Values{}
+	data.Set("grant_type", "client_credentials")
+
+	req, _ := http.NewRequest("POST", SpotifyTokenURL, strings.NewReader(data.Encode()))
+	req.SetBasicAuth(ClientID, ClientSecret)
+	req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
+
+	resp, err := http.DefaultClient.Do(req)
+	if err != nil {
+		return err
+	}
+	defer resp.Body.Close()
+
+	body, _ := ioutil.ReadAll(resp.Body)
+
+	var result map[string]interface{}
+	json.Unmarshal(body, &result)
+
+	token, ok := result["access_token"].(string)
+	if !ok {
+		return fmt.Errorf("failed to get access token")
+	}
+	spotifyAccessToken = token
+	return nil
+}
+
+// Search Songs on Spotify
+func SearchSongs(query string) (map[string]interface{}, error) {
+	if spotifyAccessToken == "" {
+		if err := getSpotifyAccessToken(); err != nil {
+			return nil, err
+		}
+	}
+
+	url := fmt.Sprintf("%s/search?q=%s&type=track", SpotifyAPIBase, url.QueryEscape(query))
+	req, _ := http.NewRequest("GET", url, nil)
+	req.Header.Add("Authorization", "Bearer "+spotifyAccessToken)
+
+	resp, err := http.DefaultClient.Do(req)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	body, _ := ioutil.ReadAll(resp.Body)
+
+	var result map[string]interface{}
+	json.Unmarshal(body, &result)
+
+	return result, nil
+}
+
+// Get Album Details from Spotify
+func GetAlbumDetails(albumID string) (map[string]interface{}, error) {
+	if spotifyAccessToken == "" {
+		if err := getSpotifyAccessToken(); err != nil {
+			return nil, err
+		}
+	}
+
+	url := fmt.Sprintf("%s/albums/%s", SpotifyAPIBase, albumID)
+	req, _ := http.NewRequest("GET", url, nil)
+	req.Header.Add("Authorization", "Bearer "+spotifyAccessToken)
+
+	resp, err := http.DefaultClient.Do(req)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	body, _ := ioutil.ReadAll(resp.Body)
+
+	var album map[string]interface{}
+	json.Unmarshal(body, &album)
+
+	return album, nil
+}
